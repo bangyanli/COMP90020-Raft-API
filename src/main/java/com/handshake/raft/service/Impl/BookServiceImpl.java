@@ -99,10 +99,15 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public ResponseEntity<FileSystemResource> getChapter(String name, String chapter) {
+        //sanity check
+        if(!new File("library/" + name).exists()){
+            throw new BookNotExistException();
+        }
         File chapterFile = new File("library/" + name + "/" + chapter);
         if(!chapterFile.exists()){
             throw new ChapterNotExistException();
         }
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.add("Content-Disposition", "attachment; filename=" + chapterFile.getName());
@@ -127,11 +132,17 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public boolean uploadChapter(String name, String chapter, MultipartFile file) {
+        //sanity check
+        if(!new File("library/" + name).exists()){
+            throw new BookNotExistException();
+        }
+
         File bookChapterFile = new File("library/" + name + "/" + chapter);
+
         try {
             file.transferTo(bookChapterFile.getAbsoluteFile());
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             throw new ChapterFailUploadException();
         }
         return true;
