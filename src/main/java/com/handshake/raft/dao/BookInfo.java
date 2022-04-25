@@ -2,12 +2,9 @@ package com.handshake.raft.dao;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.beans.ConstructorProperties;
 
 /**
  * <p>
