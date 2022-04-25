@@ -2,9 +2,11 @@ package com.handshake.raft;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 
 import java.io.File;
 
+@EnableOpenApi
 @SpringBootApplication
 public class RaftApplication {
 
