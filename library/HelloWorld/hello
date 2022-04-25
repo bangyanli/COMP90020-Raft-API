@@ -1,0 +1,25 @@
+C:\Users\44743\.jdks\openjdk-17.0.2\bin\java -jar DictionaryServer.jar
+
+C:\Users\44743\.jdks\openjdk-17.0.2\bin\java -jar DictionaryServer.jar 10000 "dictionary.json"
+
+C:\Users\44743\.jdks\openjdk-17.0.2\bin\java -jar DictionaryServer.jar 10000 "a.json"
+
+C:\Users\44743\.jdks\openjdk-17.0.2\bin\java -jar DictionaryClient.jar "127.0.0.1" 10000
+
+C:\Users\44743\.jdks\openjdk-17.0.2\bin\java -jar DictionaryClient-1.0-SNAPSHOT-shaded.jar "127.0.0.1" 10001
+
+C:\Users\44743\.jdks\openjdk-17.0.2\bin\java -jar DictionaryClient.jar 
+
+C:\Users\44743\.jdks\openjdk-17.0.2\bin\java -jar DictionaryClient.jar "218.89.171.148" 21663
+
+C:\Users\Administrator\.jdks\openjdk-17.0.1\bin\java -jar DictionaryClient.jar "218.89.171.148" 21663
+
+C:\Program Files (x86)\Common Files\Oracle\Java\javapath
+
+C:\Users\44743\.jdks\openjdk-17.0.2\bin
+
+
+
+C:\Users\44743\.jdks\openjdk-17.0.2\bin\java -jar DictionaryServer-5.jar 10000 "a.json" 1
+
+C:\Users\44743\.jdks\openjdk-17.0.2\bin\java -jar DictionaryClient-5.jar 
