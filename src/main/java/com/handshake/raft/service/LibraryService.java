@@ -1,7 +1,5 @@
 package com.handshake.raft.service;
 
-import java.util.List;
-
 /**
  * <p>
  *  service

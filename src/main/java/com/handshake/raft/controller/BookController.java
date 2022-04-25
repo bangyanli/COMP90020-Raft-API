@@ -10,13 +10,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.InputStream;
 
 /**
  * <p>
@@ -58,10 +55,11 @@ public class BookController {
         return bookService.getChapter(name,chapter);
     }
 
-    @PostMapping(value = "/{name}/{chapter}")
+    @PostMapping(value = "/{name}/{chapter}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseResult<Object> uploadBookChapter(@PathVariable("name") String name,
                                                     @PathVariable("chapter") String chapter,
-                                                    MultipartFile file){
+                                                    @RequestPart(name = "file" ,required = true) MultipartFile file){
+
         bookService.uploadChapter(name,chapter,file);
         return ResponseResult.suc("Upload chapter successfully!", null);
     }
