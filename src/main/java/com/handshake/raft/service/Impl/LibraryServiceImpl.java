@@ -1,6 +1,8 @@
 package com.handshake.raft.service.Impl;
 
 import com.handshake.raft.service.LibraryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -18,6 +20,8 @@ import java.io.File;
 @Service
 public class LibraryServiceImpl implements LibraryService {
 
+    private static final Logger logger = LoggerFactory.getLogger(LibraryServiceImpl.class);
+
     /**
      * get the catalog of library
      * @return the catalog of library
@@ -25,6 +29,7 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     public String[] getLibraryCatalog() {
         File file = new File("library");
+        logger.info("Get Library Catalog");
         return file.list();
 
     }

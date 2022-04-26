@@ -4,6 +4,8 @@ import com.handshake.raft.common.exceptions.*;
 import com.handshake.raft.common.utils.Json;
 import com.handshake.raft.dao.BookInfo;
 import com.handshake.raft.service.BookService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,6 +28,8 @@ import java.util.Date;
  */
 @Service
 public class BookServiceImpl implements BookService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     private static final String infoFile = "info.json";
 
@@ -54,6 +58,7 @@ public class BookServiceImpl implements BookService {
             e.printStackTrace();
             throw new BookFailCreateException();
         }
+        logger.info("successfully create book: " + name + " with author " + author);
         return true;
     }
 
@@ -64,7 +69,6 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookInfo getBookInfo(String name) {
         File bookInfoFile = new File("library/" + name + "/" + infoFile);
-        System.out.println(bookInfoFile.getAbsolutePath());
         if(!bookInfoFile.exists()){
             throw new BookNotExistException();
         }
@@ -75,6 +79,7 @@ public class BookServiceImpl implements BookService {
             e.printStackTrace();
             throw new BookInfoFailReadException();
         }
+        logger.info("successfully get book info: " + bookInfo);
         return bookInfo;
     }
 
@@ -88,6 +93,7 @@ public class BookServiceImpl implements BookService {
         if(!file.exists()){
             throw new BookNotExistException();
         }
+        logger.info("successfully get index of " + name);
         return file.list();
     }
 
@@ -115,6 +121,7 @@ public class BookServiceImpl implements BookService {
         headers.add("Expires", "0");
         headers.add("Last-Modified", new Date().toString());
         headers.add("ETag", String.valueOf(System.currentTimeMillis()));
+        logger.info("successfully download chapter " + chapter + " of " + name);
         return ResponseEntity
                 .ok()
                 .headers(headers)
@@ -145,6 +152,7 @@ public class BookServiceImpl implements BookService {
             //e.printStackTrace();
             throw new ChapterFailUploadException();
         }
+        logger.info("successfully upload chapter " + chapter + " of " + name);
         return true;
     }
 }
