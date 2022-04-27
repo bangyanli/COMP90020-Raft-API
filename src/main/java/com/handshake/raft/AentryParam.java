@@ -14,42 +14,39 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.handshake.raft.rpc;
-
+package com.handshake.raft;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.io.Serializable;
 
+@Getter
+@Setter
+@ToString
 @Builder
-@Data
-public class Request implements Serializable {
+public class AentryParam {
 
-    /** 请求投票 */
-    public static final int R_VOTE = 0;
-    /** 附加日志 */
-    public static final int A_ENTRIES = 1;
-    /** 客户端 */
-    public static final int CLIENT_REQ = 2;
-    /** 配置变更. add */
-    public static final int CHANGE_CONFIG_ADD = 3;
-    /** 配置变更. remove */
-    public static final int CHANGE_CONFIG_REMOVE = 4;
-    /** 请求类型 */
-    private int cmd = -1;
+    /** 候选人的任期号  */
+    private long term;
 
+    /** 被请求者 ID(ip:selfPort) */
+    private String serverId;
 
-    private Object obj;
+    /** 领导人的 Id，以便于跟随者重定向请求 */
+    private String leaderId;
 
-    private String url;
+    /**新的日志条目紧随之前的索引值  */
+    private long prevLogIndex;
 
-    public Request() {
-    }
+    /** prevLogIndex 条目的任期号  */
+    private long preLogTerm;
 
-    public Request(int cmd, Object obj, String url) {
-        this.cmd = cmd;
-        this.obj = obj;
-        this.url = url;
-    }
+    /** 准备存储的日志条目（表示心跳时为空；一次性发送多个是为了提高效率） */
+    private LogEntry[] entries;
+
+    /** 领导人已经提交的日志的索引值  */
+    private long leaderCommit;
+
 }

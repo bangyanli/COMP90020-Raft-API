@@ -14,42 +14,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.handshake.raft.rpc;
-
+package com.handshake.raft;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.io.Serializable;
 
+@Getter
+@Setter
 @Builder
 @Data
-public class Request implements Serializable {
+public class RvoteParam {
+    /** 候选人的任期号  */
+    private long term;
 
-    /** 请求投票 */
-    public static final int R_VOTE = 0;
-    /** 附加日志 */
-    public static final int A_ENTRIES = 1;
-    /** 客户端 */
-    public static final int CLIENT_REQ = 2;
-    /** 配置变更. add */
-    public static final int CHANGE_CONFIG_ADD = 3;
-    /** 配置变更. remove */
-    public static final int CHANGE_CONFIG_REMOVE = 4;
-    /** 请求类型 */
-    private int cmd = -1;
+    /** 被请求者 ID(ip:selfPort) */
+    private String serverId;
 
+    /** 请求选票的候选人的 Id(ip:selfPort) */
+    private String candidateId;
 
-    private Object obj;
+    /** 候选人的最后日志条目的索引值 */
+    private long lastLogIndex;
 
-    private String url;
-
-    public Request() {
-    }
-
-    public Request(int cmd, Object obj, String url) {
-        this.cmd = cmd;
-        this.obj = obj;
-        this.url = url;
-    }
+    /** 候选人最后日志条目的任期号  */
+    private long lastLogTerm;
 }

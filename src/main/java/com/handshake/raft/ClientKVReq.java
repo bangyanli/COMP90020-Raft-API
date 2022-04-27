@@ -14,42 +14,47 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.handshake.raft.rpc;
-
+package com.handshake.raft;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
+@Getter
+@Setter
+@ToString
 @Builder
-@Data
-public class Request implements Serializable {
+public class ClientKVReq implements Serializable {
 
-    /** 请求投票 */
-    public static final int R_VOTE = 0;
-    /** 附加日志 */
-    public static final int A_ENTRIES = 1;
-    /** 客户端 */
-    public static final int CLIENT_REQ = 2;
-    /** 配置变更. add */
-    public static final int CHANGE_CONFIG_ADD = 3;
-    /** 配置变更. remove */
-    public static final int CHANGE_CONFIG_REMOVE = 4;
-    /** 请求类型 */
-    private int cmd = -1;
+    public static int PUT = 0;
+    public static int GET = 1;
 
+    int type;
 
-    private Object obj;
+    String key;
 
-    private String url;
+    String value;
 
-    public Request() {
+    public enum Type {
+        /** 1111 */
+        PUT(0), GET(1);
+        int code;
+
+        Type(int code) {
+            this.code = code;
+        }
+
+        public static Type value(int code ) {
+            for (Type type : values()) {
+                if (type.code == code) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 
-    public Request(int cmd, Object obj, String url) {
-        this.cmd = cmd;
-        this.obj = obj;
-        this.url = url;
-    }
 }

@@ -14,36 +14,43 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.handshake.raft.rpc;
-
+package com.handshake.raft;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
 
-
+/**
+ *
+ * 请求投票 RPC 返回值.
+ *
+ */
 @Getter
 @Setter
-public class Response<T> implements Serializable {
+public class RvoteResult implements Serializable {
 
+    /** 当前任期号，以便于候选人去更新自己的任期 */
+    long term;
 
-    private T result;
+    /** 候选人赢得了此张选票时为真 */
+    boolean voteGranted;
 
-    public Response(T result) {
-        this.result = result;
+    public RvoteResult(boolean voteGranted) {
+        this.voteGranted = voteGranted;
     }
 
-    private Response(Builder builder) {
-        setResult((T) builder.result);
+    private RvoteResult(Builder builder) {
+        setTerm(builder.term);
+        setVoteGranted(builder.voteGranted);
     }
 
-    public static Response<String> ok() {
-        return new Response<>("ok");
+    public static RvoteResult fail() {
+        return new RvoteResult(false);
     }
 
-    public static Response<String> fail() {
-        return new Response<>("fail");
+    public static RvoteResult ok() {
+        return new RvoteResult(true);
     }
 
     public static Builder newBuilder() {
@@ -51,27 +58,26 @@ public class Response<T> implements Serializable {
     }
 
 
-    @Override
-    public String toString() {
-        return "Response{" +
-            "result=" + result +
-            '}';
-    }
-
     public static final class Builder {
 
-        private Object result;
+        private long term;
+        private boolean voteGranted;
 
         private Builder() {
         }
 
-        public Builder result(Object val) {
-            result = val;
+        public Builder term(long term) {
+            this.term = term;
             return this;
         }
 
-        public Response<?> build() {
-            return new Response(this);
+        public Builder voteGranted(boolean voteGranted) {
+            this.voteGranted = voteGranted;
+            return this;
+        }
+
+        public RvoteResult build() {
+            return new RvoteResult(this);
         }
     }
 }

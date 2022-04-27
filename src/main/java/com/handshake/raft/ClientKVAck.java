@@ -14,49 +14,41 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.handshake.raft.rpc;
-
+package com.handshake.raft;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
-
 @Getter
 @Setter
-public class Response<T> implements Serializable {
+@ToString
+public class ClientKVAck implements Serializable {
 
+    Object result;
 
-    private T result;
-
-    public Response(T result) {
+    public ClientKVAck(Object result) {
         this.result = result;
     }
 
-    private Response(Builder builder) {
-        setResult((T) builder.result);
+    private ClientKVAck(Builder builder) {
+        setResult(builder.result);
     }
 
-    public static Response<String> ok() {
-        return new Response<>("ok");
+    public static ClientKVAck ok() {
+        return new ClientKVAck("ok");
     }
 
-    public static Response<String> fail() {
-        return new Response<>("fail");
+    public static ClientKVAck fail() {
+        return new ClientKVAck("fail");
     }
 
     public static Builder newBuilder() {
         return new Builder();
     }
 
-
-    @Override
-    public String toString() {
-        return "Response{" +
-            "result=" + result +
-            '}';
-    }
 
     public static final class Builder {
 
@@ -70,8 +62,8 @@ public class Response<T> implements Serializable {
             return this;
         }
 
-        public Response<?> build() {
-            return new Response(this);
+        public ClientKVAck build() {
+            return new ClientKVAck(this);
         }
     }
 }
