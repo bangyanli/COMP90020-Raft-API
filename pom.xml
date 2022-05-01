@@ -36,6 +36,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!--websocket-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
         <!--		jackson for json return-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

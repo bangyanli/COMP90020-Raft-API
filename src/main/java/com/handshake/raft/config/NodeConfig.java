@@ -3,11 +3,11 @@ package com.handshake.raft.config;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 @Data
 @ToString
-@Component
+@Configuration
 @ConfigurationProperties(prefix = "raft")
 public class NodeConfig {
 
