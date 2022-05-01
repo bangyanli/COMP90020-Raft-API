@@ -3,6 +3,11 @@ package com.handshake.raft.controller;
 import com.handshake.raft.common.response.ResponseResult;
 import com.handshake.raft.dao.BookInfo;
 import com.handshake.raft.service.BookService;
+import com.handshake.raft.service.LibraryService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
@@ -54,6 +59,7 @@ public class BookController {
     public ResponseResult<Object> uploadBookChapter(@PathVariable("name") String name,
                                                     @PathVariable("chapter") String chapter,
                                                     @RequestPart(name = "file" ,required = true) MultipartFile file){
+
         bookService.uploadChapter(name,chapter,file);
         return ResponseResult.suc("Upload chapter successfully!", null);
     }
