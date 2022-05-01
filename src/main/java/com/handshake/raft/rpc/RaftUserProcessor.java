@@ -14,31 +14,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.handshake.raft;
+package com.handshake.raft.rpc;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.alipay.remoting.AsyncContext;
+import com.alipay.remoting.BizContext;
+import com.alipay.remoting.rpc.protocol.AbstractUserProcessor;
+import com.handshake.raft.exception.RaftNotSupportException;
 
-import java.util.List;
 
-/**
- *
- * 节点配置
- *
- */
-@Getter
-@Setter
-@ToString
-public class NodeConfig {
+public abstract class RaftUserProcessor<T> extends AbstractUserProcessor<T> {
 
-    /** 自身 selfPort */
-    public int selfPort;
+    @Override
+    public void handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) {
+        throw new RaftNotSupportException(
+            "Raft Server not support handleRequest(BizContext bizCtx, AsyncContext asyncCtx, T request) ");
+    }
 
-    /** 所有节点地址. */
-    public List<String> peerAddrs;
-    /**
-     *  TODO:状态快照存储类型
-     */
-     public StateMachineSaveType stateMachineSaveType;
+
+    @Override
+    public String interest() {
+        return Request.class.getName();
+    }
 }

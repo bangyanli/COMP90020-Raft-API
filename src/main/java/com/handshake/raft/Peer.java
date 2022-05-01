@@ -18,27 +18,44 @@ package com.handshake.raft;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
-import java.util.List;
+import java.util.Objects;
 
-/**
- *
- * 节点配置
- *
- */
+
 @Getter
 @Setter
-@ToString
-public class NodeConfig {
+public class Peer {
 
-    /** 自身 selfPort */
-    public int selfPort;
+    /** ip:selfPort */
+    private final String addr;
 
-    /** 所有节点地址. */
-    public List<String> peerAddrs;
-    /**
-     *  TODO:状态快照存储类型
-     */
-     public StateMachineSaveType stateMachineSaveType;
+
+    public Peer(String addr) {
+        this.addr = addr;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Peer peer = (Peer) o;
+        return Objects.equals(addr, peer.addr);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(addr);
+    }
+
+    @Override
+    public String toString() {
+        return "Peer{" +
+            "addr='" + addr + '\'' +
+            '}';
+    }
 }

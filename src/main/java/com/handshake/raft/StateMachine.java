@@ -16,29 +16,23 @@ limitations under the License.
  */
 package com.handshake.raft;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
-import java.util.List;
+public interface StateMachine extends LifeCycle {
 
-/**
- *
- * 节点配置
- *
- */
-@Getter
-@Setter
-@ToString
-public class NodeConfig {
-
-    /** 自身 selfPort */
-    public int selfPort;
-
-    /** 所有节点地址. */
-    public List<String> peerAddrs;
     /**
-     *  TODO:状态快照存储类型
+     * 将数据应用到状态机.
+     *
+     * 原则上,只需这一个方法(apply). 其他的方法是为了更方便的使用状态机.
+     * @param logEntry 日志中的数据.
      */
-     public StateMachineSaveType stateMachineSaveType;
+    void apply(LogEntry logEntry);
+
+    LogEntry get(String key);
+
+    String getString(String key);
+
+    void setString(String key, String value);
+
+    void delString(String... key);
+
 }

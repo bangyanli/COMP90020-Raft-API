@@ -16,29 +16,19 @@ limitations under the License.
  */
 package com.handshake.raft;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.List;
 
-/**
- *
- * 节点配置
- *
- */
-@Getter
-@Setter
-@ToString
-public class NodeConfig {
+public class RaftThread extends Thread {
 
-    /** 自身 selfPort */
-    public int selfPort;
+    private static final Logger LOGGER = LoggerFactory.getLogger(RaftThread.class);
+    private static final UncaughtExceptionHandler uncaughtExceptionHandler = (t, e)
+        -> LOGGER.warn("Exception occurred from thread {}", t.getName(), e);
 
-    /** 所有节点地址. */
-    public List<String> peerAddrs;
-    /**
-     *  TODO:状态快照存储类型
-     */
-     public StateMachineSaveType stateMachineSaveType;
+    public RaftThread(String threadName, Runnable r) {
+        super(r, threadName);
+        setUncaughtExceptionHandler(uncaughtExceptionHandler);
+    }
+
 }

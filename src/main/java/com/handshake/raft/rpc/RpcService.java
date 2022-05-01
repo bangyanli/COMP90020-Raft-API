@@ -14,31 +14,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
  */
-package com.handshake.raft;
+package com.handshake.raft.rpc;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
-import java.util.List;
+import com.handshake.raft.LifeCycle;
 
-/**
- *
- * 节点配置
- *
- */
-@Getter
-@Setter
-@ToString
-public class NodeConfig {
+public interface RpcService extends LifeCycle {
 
-    /** 自身 selfPort */
-    public int selfPort;
-
-    /** 所有节点地址. */
-    public List<String> peerAddrs;
     /**
-     *  TODO:状态快照存储类型
+     * 处理请求.
+     * @param request 请求参数.
+     * @return 返回值.
      */
-     public StateMachineSaveType stateMachineSaveType;
+    Response<?> handlerRequest(Request request);
+
 }

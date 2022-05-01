@@ -16,29 +16,18 @@ limitations under the License.
  */
 package com.handshake.raft;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
-import java.util.List;
+public interface LifeCycle {
 
-/**
- *
- * 节点配置
- *
- */
-@Getter
-@Setter
-@ToString
-public class NodeConfig {
-
-    /** 自身 selfPort */
-    public int selfPort;
-
-    /** 所有节点地址. */
-    public List<String> peerAddrs;
     /**
-     *  TODO:状态快照存储类型
+     * 初始化.
+     * @throws Throwable
      */
-     public StateMachineSaveType stateMachineSaveType;
+    void init() throws Throwable;
+
+    /**
+     * 关闭资源.
+     * @throws Throwable
+     */
+    void destroy() throws Throwable;
 }

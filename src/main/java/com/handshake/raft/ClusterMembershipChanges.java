@@ -16,29 +16,21 @@ limitations under the License.
  */
 package com.handshake.raft;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
-import java.util.List;
+public interface ClusterMembershipChanges {
 
-/**
- *
- * 节点配置
- *
- */
-@Getter
-@Setter
-@ToString
-public class NodeConfig {
-
-    /** 自身 selfPort */
-    public int selfPort;
-
-    /** 所有节点地址. */
-    public List<String> peerAddrs;
     /**
-     *  TODO:状态快照存储类型
+     * 添加节点.
+     * @param newPeer
+     * @return
      */
-     public StateMachineSaveType stateMachineSaveType;
+    Result addPeer(Peer newPeer);
+
+    /**
+     * 删除节点.
+     * @param oldPeer
+     * @return
+     */
+    Result removePeer(Peer oldPeer);
 }
+

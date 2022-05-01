@@ -1,6 +1,6 @@
 package com.handshake.raft;
 
-public interface Node {
+public interface Node extends LifeCycle{
     /**
      * 设置配置文件.
      *

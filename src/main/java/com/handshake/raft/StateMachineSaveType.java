@@ -16,29 +16,33 @@ limitations under the License.
  */
 package com.handshake.raft;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
-import java.util.List;
 
 /**
  *
- * 节点配置
+ * 快照存储类型
  *
+ * @author rensailong
  */
-@Getter
-@Setter
-@ToString
-public class NodeConfig {
+public enum StateMachineSaveType {
+    /** sy */
+    ROCKS_DB("RocksDB", "RocksDB本地存储", DefaultStateMachine.getInstance())
+    ;
 
-    /** 自身 selfPort */
-    public int selfPort;
+    public StateMachine getStateMachine() {
+        return this.stateMachine;
+    }
 
-    /** 所有节点地址. */
-    public List<String> peerAddrs;
-    /**
-     *  TODO:状态快照存储类型
-     */
-     public StateMachineSaveType stateMachineSaveType;
+    private String typeName;
+
+    private String desc;
+
+    private StateMachine stateMachine;
+
+    StateMachineSaveType(String typeName, String desc, StateMachine stateMachine) {
+        this.typeName = typeName;
+        this.desc = desc;
+        this.stateMachine = stateMachine;
+    }
+
 }

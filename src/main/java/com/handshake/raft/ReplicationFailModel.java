@@ -16,29 +16,20 @@ limitations under the License.
  */
 package com.handshake.raft;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Builder;
 
-import java.util.List;
+import java.util.concurrent.Callable;
 
-/**
- *
- * 节点配置
- *
- */
-@Getter
-@Setter
-@ToString
-public class NodeConfig {
 
-    /** 自身 selfPort */
-    public int selfPort;
+@Builder
+public class ReplicationFailModel {
+    static String count = "_count";
+    static String success = "_success";
 
-    /** 所有节点地址. */
-    public List<String> peerAddrs;
-    /**
-     *  TODO:状态快照存储类型
-     */
-     public StateMachineSaveType stateMachineSaveType;
+    public String countKey;
+    public String successKey;
+    public Callable callable;
+    public LogEntry logEntry;
+    public Peer peer;
+    public Long offerTime;
 }
