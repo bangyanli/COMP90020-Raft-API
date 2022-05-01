@@ -6,8 +6,7 @@ raft:
     - "localhost:5001"
     - "localhost:6001"
     - "localhost:7001"
-  self:
-    - "localhost:5001"
+  self: "localhost:5001"
 
 spring:
   mvc:
