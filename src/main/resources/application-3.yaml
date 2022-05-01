@@ -1,5 +1,5 @@
 server:
-  port: 5000
+  port: 7000
 
 raft:
   servers:
@@ -7,7 +7,7 @@ raft:
     - "localhost:6001"
     - "localhost:7001"
   self:
-    - "localhost:5001"
+    - "localhost:7001"
 
 spring:
   mvc:
