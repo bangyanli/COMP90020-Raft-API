@@ -4,6 +4,7 @@ import com.handshake.raft.common.exceptions.*;
 import com.handshake.raft.common.utils.Json;
 import com.handshake.raft.dao.BookInfo;
 import com.handshake.raft.service.BookService;
+import nonapi.io.github.classgraph.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -113,10 +115,10 @@ public class BookServiceImpl implements BookService {
      * get the chapter of a book
      * @param name the name of the book
      * @param chapter the name of the chapter
-     * @return response with file
+     * @return String
      */
     @Override
-    public ResponseEntity<FileSystemResource> getChapter(String name, String chapter) {
+    public String getChapter(String name, String chapter) {
         //sanity check
         if(!new File("library/" + name).exists()){
             throw new BookNotExistException();
@@ -126,25 +128,17 @@ public class BookServiceImpl implements BookService {
             throw new ChapterNotExistException();
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.add("Content-Disposition", "attachment; filename=" + chapterFile.getName());
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
-        headers.add("Last-Modified", new Date().toString());
-        headers.add("ETag", String.valueOf(System.currentTimeMillis()));
-
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
         readLock.lock();
-        FileSystemResource resource = new FileSystemResource(chapterFile);
+        String str = null;
+        try {
+            str = Files.readString(chapterFile.toPath());
+        } catch (IOException e) {
+            throw new ChapterFailReadException();
+        }
         readLock.unlock();
         logger.info("successfully download chapter " + chapter + " of " + name);
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .contentLength(chapterFile.length())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(resource);
+        return str;
     }
 
     /**

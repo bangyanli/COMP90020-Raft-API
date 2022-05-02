@@ -47,15 +47,16 @@ public class BookController {
     }
 
     @GetMapping(value = "/{name}/{chapter}")
-    public ResponseEntity<FileSystemResource> getBookChapter(@PathVariable("name") String name,
+    public ResponseResult<Object> getBookChapter(@PathVariable("name") String name,
                                                              @PathVariable("chapter") String chapter){
-        return bookService.getChapter(name,chapter);
+        String chapterString = bookService.getChapter(name, chapter);
+        return ResponseResult.suc("Get book chapter successfully!", chapterString);
     }
 
-    @PostMapping(value = "/{name}/{chapter}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{name}/{chapter}")
     public ResponseResult<Object> uploadBookChapter(@PathVariable("name") String name,
                                                     @PathVariable("chapter") String chapter,
-                                                    @RequestPart(name = "file" ,required = true) MultipartFile file){
+                                                    @RequestPart(name = "file") String file){
         bookService.uploadChapter(name,chapter,file);
         return ResponseResult.suc("Upload chapter successfully!", null);
     }

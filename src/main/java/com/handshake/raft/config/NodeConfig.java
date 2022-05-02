@@ -18,4 +18,10 @@ public class NodeConfig {
     private volatile long electionTimeout;
     private long heartBeatFrequent;
 
+    public ArrayList<String> getOtherServers(){
+        ArrayList<String> otherServers = new ArrayList<>(servers);
+        otherServers.remove(self);
+        return otherServers;
+    }
+
 }
