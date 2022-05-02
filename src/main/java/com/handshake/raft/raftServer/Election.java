@@ -16,7 +16,14 @@ public class Election implements Runnable{
         if(node.getNodeStatus()== Status.LEADER){
             return;
         }
+        //resolve election conflict
         long currentTime = System.currentTimeMillis();
-        node.setElectionTime(node.getElectionTime() + ThreadLocalRandom.current().nextInt(100));
+        long randomElectionTime = node.getElectionTime() + ThreadLocalRandom.current().nextInt(100);
+        node.setElectionTime(randomElectionTime);
+        if(currentTime - randomElectionTime < node.getLastElectionTime())
+            return;
+
+        node.setNodeStatus(Status.CANDIDATE);
+
     }
 }
