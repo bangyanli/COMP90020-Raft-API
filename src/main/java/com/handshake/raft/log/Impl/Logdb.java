@@ -1,25 +1,26 @@
-package com.handshake.raft.logdb;
+package com.handshake.raft.log.Impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.handshake.raft.common.utils.Json;
 import com.handshake.raft.dto.LogEntry;
+import com.handshake.raft.log.LogDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Repository
-public class Logdb {
+public class Logdb implements LogDatabase {
 
     private static final Logger logger = LoggerFactory.getLogger(Logdb.class);
 
     private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public void saveToLocal(ArrayList<LogEntry> logEntries){
+    public void saveToLocal(CopyOnWriteArrayList<LogEntry> logEntries){
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
         writeLock.lock();
         try {
@@ -32,13 +33,13 @@ public class Logdb {
         }
     }
 
-    public ArrayList<LogEntry> readFromLocal(){
+    public CopyOnWriteArrayList<LogEntry> readFromLocal(){
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
         readLock.lock();
-        ArrayList<LogEntry> logEntries = new ArrayList<>();
+        CopyOnWriteArrayList<LogEntry> logEntries = new CopyOnWriteArrayList<>();
         try {
             logEntries = Json.getInstance().readValue(new File("log.json"),
-                    new TypeReference<ArrayList<LogEntry>>() {
+                    new TypeReference<CopyOnWriteArrayList<LogEntry>>() {
             });
         } catch (IOException e) {
             logger.warn(e.getMessage(),e);

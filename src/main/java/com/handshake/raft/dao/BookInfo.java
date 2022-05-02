@@ -21,12 +21,18 @@ public class BookInfo {
 
     @JsonCreator
     public BookInfo(@JsonProperty("name")String name,
-                    @JsonProperty("author")String author) {
+                    @JsonProperty("author")String author,
+                    @JsonProperty("category")String category,
+                    @JsonProperty("description")String description) {
         this.name = name;
         this.author = author;
+        this.category = category;
+        this.description = description;
     }
 
     private String name;
     private String author;
+    private String category;
+    private String description;
 
 }

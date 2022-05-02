@@ -14,7 +14,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(value = UploadChapterCommand.class, name = "uploadChapterCommand") })
 public interface Command extends Serializable {
 
-    public void excute();
+    public void execute();
 
     public String toString();
 
