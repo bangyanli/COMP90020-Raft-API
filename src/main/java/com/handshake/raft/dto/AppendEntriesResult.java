@@ -7,7 +7,7 @@ import lombok.ToString;
 @ToString
 public class AppendEntriesResult {
 
-    Long term;
+    int term;
     Boolean success;
 
 }

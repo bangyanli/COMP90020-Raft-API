@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Builder
 public class RequestVoteResult implements Serializable {
 
-    Long term;
+    int term;
     Boolean voteGranted;
 
     RequestVoteResult(Long term,Boolean voteGranted){
