@@ -13,8 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Date;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -168,6 +167,38 @@ public class BookServiceImpl implements BookService {
         writeLock.lock();
         try {
             file.transferTo(bookChapterFile.getAbsoluteFile());
+        } catch (IOException e) {
+            //e.printStackTrace();
+            writeLock.unlock();
+            throw new ChapterFailUploadException();
+        }
+        writeLock.unlock();
+        logger.info("successfully upload chapter " + chapter + " of " + name);
+        return true;
+    }
+
+    /**
+     * upload chapter
+     * @param name the name of the book
+     * @param chapter the name of the chapter
+     * @param file file to upload
+     * @return InputStreamResource of chapter file
+     */
+    @Override
+    public boolean uploadChapter(String name, String chapter, String file) {
+        //sanity check
+        if(!new File("library/" + name).exists()){
+            throw new BookNotExistException();
+        }
+
+        File bookChapterFile = new File("library/" + name + "/" + chapter);
+
+        ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
+        writeLock.lock();
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(bookChapterFile));
+            writer.write(file);
+            writer.close();
         } catch (IOException e) {
             //e.printStackTrace();
             writeLock.unlock();

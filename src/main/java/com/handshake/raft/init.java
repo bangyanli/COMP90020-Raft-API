@@ -1,8 +1,7 @@
 package com.handshake.raft;
 
 import com.handshake.raft.config.NodeConfig;
-import com.handshake.raft.dto.Command;
-import com.handshake.raft.dto.CreateBookCommand;
+import com.handshake.raft.logdb.Logdb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

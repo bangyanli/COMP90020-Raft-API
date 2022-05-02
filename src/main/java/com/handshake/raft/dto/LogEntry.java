@@ -1,6 +1,8 @@
 package com.handshake.raft.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,5 +18,12 @@ public class LogEntry implements Serializable{
 
     private Command command;
 
-
+    @JsonCreator
+    public LogEntry(@JsonProperty("index")Long index,
+                    @JsonProperty("term")Long term,
+                    @JsonProperty("command")Command command) {
+        this.index = index;
+        this.term = term;
+        this.command = command;
+    }
 }

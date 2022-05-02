@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@ServerEndpoint("/raft/{userId}")
-@Service
+//@ServerEndpoint("/raft/{userId}")
+//@Service
 public class WebSocketServer {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
