@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * <p>
@@ -30,6 +31,8 @@ import java.util.Date;
 public class BookServiceImpl implements BookService {
 
     private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
+
+    private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     private static final String infoFile = "info.json";
 
@@ -51,13 +54,19 @@ public class BookServiceImpl implements BookService {
         //store basic information for the book
         BookInfo bookInfo = new BookInfo(name, author);
         File bookInfoFile = new File("library/" + name + "/" + infoFile);
+
+        ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
+        writeLock.lock();
         try {
             Json.getInstance().writeValue(bookInfoFile.getAbsoluteFile(), bookInfo);
         } catch (IOException e) {
             file.delete();
             e.printStackTrace();
+            writeLock.unlock();
             throw new BookFailCreateException();
         }
+        writeLock.unlock();
+
         logger.info("successfully create book: " + name + " with author " + author);
         return true;
     }
@@ -73,12 +82,16 @@ public class BookServiceImpl implements BookService {
             throw new BookNotExistException();
         }
         BookInfo bookInfo = null;
+        ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
+        readLock.lock();
         try {
             bookInfo = Json.getInstance().readValue(bookInfoFile.getAbsoluteFile(), BookInfo.class);
         } catch (IOException e) {
             e.printStackTrace();
+            readLock.unlock();
             throw new BookInfoFailReadException();
         }
+        readLock.unlock();
         logger.info("successfully get book info: " + bookInfo);
         return bookInfo;
     }
@@ -121,13 +134,18 @@ public class BookServiceImpl implements BookService {
         headers.add("Expires", "0");
         headers.add("Last-Modified", new Date().toString());
         headers.add("ETag", String.valueOf(System.currentTimeMillis()));
+
+        ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
+        readLock.lock();
+        FileSystemResource resource = new FileSystemResource(chapterFile);
+        readLock.unlock();
         logger.info("successfully download chapter " + chapter + " of " + name);
         return ResponseEntity
                 .ok()
                 .headers(headers)
                 .contentLength(chapterFile.length())
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(new FileSystemResource(chapterFile));
+                .body(resource);
     }
 
     /**
@@ -146,12 +164,16 @@ public class BookServiceImpl implements BookService {
 
         File bookChapterFile = new File("library/" + name + "/" + chapter);
 
+        ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
+        writeLock.lock();
         try {
             file.transferTo(bookChapterFile.getAbsoluteFile());
         } catch (IOException e) {
             //e.printStackTrace();
+            writeLock.unlock();
             throw new ChapterFailUploadException();
         }
+        writeLock.unlock();
         logger.info("successfully upload chapter " + chapter + " of " + name);
         return true;
     }
