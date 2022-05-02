@@ -41,7 +41,7 @@ public class BookServiceImpl implements BookService {
      * @param author the author of the book
      */
     @Override
-    public boolean createBook(String name, String author) {
+    public boolean createBook(String name, String author, String category, String description) {
         File file = new File("library/" + name);
         if(file.exists()){
             throw new BookAlreadyExistException();
@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
         }
 
         //store basic information for the book
-        BookInfo bookInfo = new BookInfo(name, author);
+        BookInfo bookInfo = new BookInfo(name, author, category, description);
         File bookInfoFile = new File("library/" + name + "/" + infoFile);
 
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();

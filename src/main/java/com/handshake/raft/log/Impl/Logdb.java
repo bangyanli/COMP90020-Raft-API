@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Repository
@@ -20,7 +20,7 @@ public class Logdb implements LogDatabase {
 
     private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public void saveToLocal(ArrayList<LogEntry> logEntries){
+    public void saveToLocal(CopyOnWriteArrayList<LogEntry> logEntries){
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
         writeLock.lock();
         try {
@@ -33,13 +33,13 @@ public class Logdb implements LogDatabase {
         }
     }
 
-    public ArrayList<LogEntry> readFromLocal(){
+    public CopyOnWriteArrayList<LogEntry> readFromLocal(){
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
         readLock.lock();
-        ArrayList<LogEntry> logEntries = new ArrayList<>();
+        CopyOnWriteArrayList<LogEntry> logEntries = new CopyOnWriteArrayList<>();
         try {
             logEntries = Json.getInstance().readValue(new File("log.json"),
-                    new TypeReference<ArrayList<LogEntry>>() {
+                    new TypeReference<CopyOnWriteArrayList<LogEntry>>() {
             });
         } catch (IOException e) {
             logger.warn(e.getMessage(),e);

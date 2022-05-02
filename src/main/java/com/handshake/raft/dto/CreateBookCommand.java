@@ -15,17 +15,23 @@ public class CreateBookCommand implements Command{
 
     private String name;
     private String author;
+    private String category;
+    private String description;
 
     @JsonCreator
     public CreateBookCommand(@JsonProperty("name")String name,
-                             @JsonProperty("author")String author) {
+                             @JsonProperty("author")String author,
+                             @JsonProperty("category")String category,
+                             @JsonProperty("description")String description) {
         this.name = name;
         this.author = author;
+        this.category = category;
+        this.description = description;
     }
 
     @Override
     public void execute() {
-        bookService.createBook(name,author);
+        bookService.createBook(name,author,category,description);
     }
 
     @Override

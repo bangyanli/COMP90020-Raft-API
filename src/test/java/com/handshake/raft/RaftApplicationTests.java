@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -30,13 +31,13 @@ class RaftApplicationTests {
 
     @Test
     void testLogDatabase() {
-        ArrayList<LogEntry> logEntries = new ArrayList<>();
-        logEntries.add(new LogEntry(1L,1L,new CreateBookCommand("zzz","aaa")));
-        logEntries.add(new LogEntry(2L,1L,new CreateBookCommand("aaa","aaa")));
-        logEntries.add(new LogEntry(3L,1L,new CreateBookCommand("bbb","aaa")));
+        CopyOnWriteArrayList<LogEntry> logEntries = new CopyOnWriteArrayList<>();
+        logEntries.add(new LogEntry(1L,1L,new CreateBookCommand("zzz","aaa","1","1")));
+        logEntries.add(new LogEntry(2L,1L,new CreateBookCommand("aaa","aaa","1","1")));
+        logEntries.add(new LogEntry(3L,1L,new CreateBookCommand("bbb","aaa","1","1")));
         logEntries.add(new LogEntry(3L,1L,new UploadChapterCommand("zzz","aaa",createMultipartFile())));
         logdb.saveToLocal(logEntries);
-        ArrayList<LogEntry> logEntries1 = logdb.readFromLocal();
+        CopyOnWriteArrayList<LogEntry> logEntries1 = logdb.readFromLocal();
         Command command = logEntries.get(logEntries.size() - 1).getCommand();
         System.out.println(command.toString());
         command.execute();

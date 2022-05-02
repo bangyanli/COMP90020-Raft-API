@@ -2,11 +2,11 @@ package com.handshake.raft.log;
 
 import com.handshake.raft.dto.LogEntry;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public interface LogDatabase {
 
-    public void saveToLocal(ArrayList<LogEntry> logEntries);
+    public void saveToLocal(CopyOnWriteArrayList<LogEntry> logEntries);
 
-    public ArrayList<LogEntry> readFromLocal();
+    public CopyOnWriteArrayList<LogEntry> readFromLocal();
 }

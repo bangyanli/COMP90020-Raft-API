@@ -21,7 +21,7 @@ public interface BookService {
      * @param name the name of the book
      * @param author the author of the book
      */
-    public boolean createBook(String name, String author);
+    public boolean createBook(String name, String author, String category, String description);
 
     /**
      * get the basic information of a book

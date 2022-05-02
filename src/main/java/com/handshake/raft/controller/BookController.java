@@ -33,8 +33,10 @@ public class BookController {
 
     @PostMapping(value = "/{name}")
     public ResponseResult<Object> postBook(@PathVariable("name") String name,
-                                           @RequestParam("author") String author){
-        boolean book = bookService.createBook(name, author);
+                                           @RequestParam("author") String author,
+                                           @RequestParam("category") String category,
+                                           @RequestParam("description") String description){
+        boolean book = bookService.createBook(name, author, category, description);
         return ResponseResult.suc("Create book successfully!", book);
     }
 
