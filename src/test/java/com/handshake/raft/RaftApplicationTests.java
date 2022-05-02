@@ -4,13 +4,14 @@ import com.handshake.raft.dto.Command;
 import com.handshake.raft.dto.CreateBookCommand;
 import com.handshake.raft.dto.LogEntry;
 import com.handshake.raft.dto.UploadChapterCommand;
-import com.handshake.raft.logdb.Logdb;
+import com.handshake.raft.log.Impl.Logdb;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -21,13 +22,14 @@ import java.util.ArrayList;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@WebAppConfiguration
 class RaftApplicationTests {
 
     @Autowired
     Logdb logdb;
 
     @Test
-    void contextLoads() {
+    void testLogDatabase() {
         ArrayList<LogEntry> logEntries = new ArrayList<>();
         logEntries.add(new LogEntry(1L,1L,new CreateBookCommand("zzz","aaa")));
         logEntries.add(new LogEntry(2L,1L,new CreateBookCommand("aaa","aaa")));
@@ -37,8 +39,7 @@ class RaftApplicationTests {
         ArrayList<LogEntry> logEntries1 = logdb.readFromLocal();
         Command command = logEntries.get(logEntries.size() - 1).getCommand();
         System.out.println(command.toString());
-        command.excute();
-        //System.out.println(logEntries1);
+        command.execute();
     }
 
     private MultipartFile createMultipartFile(){

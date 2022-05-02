@@ -1,8 +1,9 @@
-package com.handshake.raft.logdb;
+package com.handshake.raft.log.Impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.handshake.raft.common.utils.Json;
 import com.handshake.raft.dto.LogEntry;
+import com.handshake.raft.log.LogDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Repository
-public class Logdb {
+public class Logdb implements LogDatabase {
 
     private static final Logger logger = LoggerFactory.getLogger(Logdb.class);
 

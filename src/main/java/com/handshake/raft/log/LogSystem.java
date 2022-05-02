@@ -1,4 +1,4 @@
-package com.handshake.raft.protocals;
+package com.handshake.raft.log;
 
 import com.handshake.raft.dto.LogEntry;
 

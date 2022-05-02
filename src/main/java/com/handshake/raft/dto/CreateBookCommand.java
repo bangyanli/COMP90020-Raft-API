@@ -24,7 +24,7 @@ public class CreateBookCommand implements Command{
     }
 
     @Override
-    public void excute() {
+    public void execute() {
         bookService.createBook(name,author);
     }
 

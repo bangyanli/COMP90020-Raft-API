@@ -45,7 +45,7 @@ public class UploadChapterCommand implements Command{
     }
 
     @Override
-    public void excute() {
+    public void execute() {
         bookService.uploadChapter(name,chapter,file);
     }
 
