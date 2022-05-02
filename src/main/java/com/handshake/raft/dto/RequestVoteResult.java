@@ -9,7 +9,7 @@ import lombok.ToString;
 @Builder
 public class RequestVoteResult {
 
-    Long term;
+    int term;
     Boolean voteGranted;
 
 }

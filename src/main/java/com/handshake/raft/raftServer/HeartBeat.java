@@ -1,6 +1,7 @@
 package com.handshake.raft.raftServer;
 
 import com.handshake.raft.dto.AppendEntriesParam;
+import com.handshake.raft.rpc.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +25,19 @@ public class HeartBeat implements Runnable{
         }
         ArrayList<String> otherServers = node.getNodeConfig().getOtherServers();
         for(String url: otherServers){
-//            AppendEntriesParam.builder()
-//                    .term()
+            AppendEntriesParam param = AppendEntriesParam.builder()
+                    .term(node.getCurrentTerm())
+                    .leaderId(node.getNodeConfig().getSelf())
+                    .prevLogIndex(null)
+                    .entries(null)
+                    .leaderCommit(node.getCommitIndex())
+                    .build();
+
+            Request.builder()
+                    .cmd(Request.A_ENTRIES)
+                    .obj(param)
+                    .url(url)
+                    .build();
         }
 
 

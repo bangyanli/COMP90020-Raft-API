@@ -11,10 +11,10 @@ import java.util.ArrayList;
 @Builder
 public class AppendEntriesParam {
 
-    Long term;
+    int term;
     String leaderId;
     Long prevLogIndex;
     ArrayList<LogEntry> entries;
-    Long leaderCommit;
+    int leaderCommit;
 
 }
