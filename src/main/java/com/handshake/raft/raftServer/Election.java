@@ -24,6 +24,12 @@ public class Election implements Runnable{
             return;
 
         node.setNodeStatus(Status.CANDIDATE);
+        node.setLastElectionTime(System.currentTimeMillis() + ThreadLocalRandom.current().nextInt(100) + 150);
+        int currentTerm = node.getCurrentTerm();
+        node.setCurrentTerm(currentTerm+1);
+        String self = node.getNodeConfig().getSelf();
+        node.setVotedFor(self);
+
 
     }
 }
