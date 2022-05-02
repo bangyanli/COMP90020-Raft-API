@@ -15,17 +15,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 package com.handshake.raft.rpc;
-
+//TODO: after finish RaftNode
 
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.RpcServer;
 import lombok.extern.slf4j.Slf4j;
-
+/*
 @Slf4j
 public class DefaultRpcServiceImpl implements RpcService {
 
-    private final RaftNode node;
     private final RpcServer rpcServer;
+    private final RaftNode node;
 
     public DefaultRpcServiceImpl(int port, RaftNode node) {
         rpcServer = new RpcServer(port, false, false);
@@ -67,3 +67,4 @@ public class DefaultRpcServiceImpl implements RpcService {
         log.info("destroy success");
     }
 }
+*/
