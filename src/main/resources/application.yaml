@@ -7,6 +7,8 @@ raft:
     - "localhost:6001"
     - "localhost:7001"
   self: "localhost:5001"
+  electionTimeout: 15000
+  heartBeatFrequent: 5000
 
 spring:
   mvc:

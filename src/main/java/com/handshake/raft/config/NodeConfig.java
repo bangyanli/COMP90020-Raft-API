@@ -13,4 +13,7 @@ public class NodeConfig {
 
     private String[] servers;
     private String self;
+    private volatile long electionTimeout;
+    private long heartBeatFrequent;
+
 }
