@@ -1,7 +1,10 @@
 package com.handshake.raft.raftServer;
 
+import com.handshake.raft.dto.AppendEntriesParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 public class HeartBeat implements Runnable{
 
@@ -16,8 +19,15 @@ public class HeartBeat implements Runnable{
     @Override
     public void run() {
         if(node.getNodeStatus() != Status.LEADER){
+            logger.warn("Node start heartbeat when status: " + node.getNodeStatus());
             return;
         }
+        ArrayList<String> otherServers = node.getNodeConfig().getOtherServers();
+        for(String url: otherServers){
+//            AppendEntriesParam.builder()
+//                    .term()
+        }
+
 
     }
 }

@@ -39,9 +39,9 @@ public interface BookService {
      * get the chapter of a book
      * @param name the name of the book
      * @param chapter the name of the chapter
-     * @return response with file
+     * @return string
      */
-    public ResponseEntity<FileSystemResource> getChapter(String name, String chapter);
+    public String getChapter(String name, String chapter);
 
     /**
      * upload chapter
