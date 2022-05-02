@@ -12,15 +12,15 @@ import java.io.Serializable;
 @Builder
 public class LogEntry implements Serializable{
 
-    private Long index;
+    private int index;
 
-    private Long term;
+    private int term;
 
     private Command command;
 
     @JsonCreator
-    public LogEntry(@JsonProperty("index")Long index,
-                    @JsonProperty("term")Long term,
+    public LogEntry(@JsonProperty("index")int index,
+                    @JsonProperty("term")int term,
                     @JsonProperty("command")Command command) {
         this.index = index;
         this.term = term;

@@ -17,7 +17,7 @@ public class Node {
     @Autowired
     private NodeConfig nodeConfig;
     private LogSystem log;
-    private volatile Status nodeStatus;
+    private volatile Status nodeStatus = Status.FOLLOWER;
     private volatile long electionTime;
     private volatile long lastElectionTime;
     private volatile int currentTerm;
