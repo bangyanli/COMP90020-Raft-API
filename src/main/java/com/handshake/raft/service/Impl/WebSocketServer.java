@@ -11,15 +11,15 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@ServerEndpoint("/raft/{userId}")
-@Service
+//@ServerEndpoint("/raft/{userId}")
+//@Service
 public class WebSocketServer {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
 
-    private static AtomicInteger onlineNum = new AtomicInteger();
+    private static final AtomicInteger onlineNum = new AtomicInteger();
 
-    private static ConcurrentHashMap<String, Session> sessionMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Session> sessionMap = new ConcurrentHashMap<>();
 
     @OnOpen
     public void onOpen(Session session, @PathParam("userId") String userId){

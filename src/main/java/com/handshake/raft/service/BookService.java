@@ -51,4 +51,13 @@ public interface BookService {
      * @return InputStreamResource of chapter file
      */
     public boolean uploadChapter(String name, String chapter, MultipartFile file);
+
+    /**
+     * upload chapter
+     * @param name the name of the book
+     * @param chapter the name of the chapter
+     * @param file file to upload
+     * @return InputStreamResource of chapter file
+     */
+    public boolean uploadChapter(String name, String chapter, String file);
 }
