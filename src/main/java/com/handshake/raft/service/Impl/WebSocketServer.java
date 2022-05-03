@@ -1,78 +1,63 @@
 package com.handshake.raft.service.Impl;
-
+import com.handshake.raft.raftServer.Node;
+import com.handshake.raft.raftServer.proto.LogEntry;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.socket.server.standard.SpringConfigurator;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
-@ServerEndpoint("/raft/{userId}")
 @Service
-public class WebSocketServer {
-
+@Getter
+@Setter
+@Component
+public class WebSocketServer extends TextWebSocketHandler {
+    private Session session;
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
-
-    private static final AtomicInteger onlineNum = new AtomicInteger();
-
-    private static final ConcurrentHashMap<String, Session> sessionMap = new ConcurrentHashMap<>();
-
-    @OnOpen
-    public void onOpen(Session session, @PathParam("userId") String userId){
-        if(sessionMap.containsKey(userId)){
-            sessionMap.remove(userId);
-            sessionMap.put(userId,session);
+    //@Autowired
+    //private Node node;
+    //private String port = node.getNodeConfig().getSelf();
+    @Override
+    public void handleTextMessage(WebSocketSession session, TextMessage message)
+            throws InterruptedException, IOException {
+        System.out.println(session.getId());
+        session.sendMessage(new TextMessage("Hello world!"));
+    }
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session){
+        System.out.println(session.getId());
+        try {
+            session.sendMessage(new TextMessage("Hello world!"));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        else {
-            sessionMap.put(userId,session);
-            addOnlineCount();
-        }
-        logger.info("User: " + userId + " connect to web socket.");
 
     }
-
-    @OnClose
-    public void OnClose(@PathParam("userId") String userId){
-        if(sessionMap.containsKey(userId)){
-            sessionMap.remove(userId);
-            subOnlineCount();
-        }
-        logger.info("User: " + userId + " disconnect from web socket.");
-
-    }
-
-    @OnError
-    public void onError(Throwable throwable){
-        logger.warn(throwable.getMessage());
-    }
-
-    /**
-     * send message to all online user
-     * @param message message to send
-     */
-    public static void broadcastMessage(String message){
-        for(Session session: sessionMap.values()){
-            try{
-                session.getBasicRemote().sendText(message);
+/*
+        if(!portId.equals(port) && session!=null) {
+            try {
+                session.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            catch (IOException e){
-                logger.warn(e.getMessage());
-            }
+        }else{
+            //TODO:implement logs
+            //LogEntry logEntry = node.getLog().getLast();
+            //session.getBasicRemote().sendObject(logEntry);
+
         }
-    }
-
-    public static void addOnlineCount(){
-        onlineNum.incrementAndGet();
-    }
-
-    public static void subOnlineCount() {
-        onlineNum.decrementAndGet();
-    }
-
+        */
 
 
 

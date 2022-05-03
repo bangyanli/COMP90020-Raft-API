@@ -19,6 +19,7 @@ public class NodeConfig {
     private long heartBeatFrequent;
     private String log;
 
+    private int webSocketServer;
     public ArrayList<String> getOtherServers(){
         ArrayList<String> otherServers = new ArrayList<>(servers);
         otherServers.remove(self);
