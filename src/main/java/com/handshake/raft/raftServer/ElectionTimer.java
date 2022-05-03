@@ -1,5 +1,6 @@
 package com.handshake.raft.raftServer;
 
+import com.handshake.raft.common.utils.SpringContextUtil;
 import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +28,9 @@ public class ElectionTimer implements Runnable,LifeCycle{
         if (electionTimer != null && !electionTimer.isDone()) {
             electionTimer.cancel(true);
         }
-        electionTimer = raftThreadPool.getScheduledExecutorService().schedule(
+        electionTimer = raftThreadPool.getScheduledExecutorService().scheduleWithFixedDelay(
                 new ElectionTimer(),
+                0,
                 node.getNodeConfig().getElectionTimeout() + ThreadLocalRandom.current().nextInt(100),
                 TimeUnit.MILLISECONDS);
         raftThreadPool.setElectionTimer(electionTimer);
@@ -44,6 +46,7 @@ public class ElectionTimer implements Runnable,LifeCycle{
 
     @Override
     public void run() {
+        Node node = SpringContextUtil.getBean(Node.class);
         logger.info("Change to candidate in Term" + node.getCurrentTerm());
         //TODO change to candidate
     }

@@ -13,7 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -30,6 +33,8 @@ public class Election implements Runnable{
 
     @Override
     public void run() {
+        //use to interrupt task
+        ConcurrentHashMap<String, Future<?>> RPCTaskMap = new ConcurrentHashMap<>();
         try {
             if (node.getNodeStatus() == Status.LEADER) {
                 logger.warn("Node start heartbeat when status: {}", node.getNodeStatus());
@@ -56,12 +61,13 @@ public class Election implements Runnable{
                     .lastLogTerm(last.getTerm())
                     .build();
             ArrayList<String> peers = config.getOtherServers();
+            //use to wait result
             CountDownLatch latch = new CountDownLatch(peers.size());
             for (String peer : peers) {
                 RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
                 RaftConsensusService service = rpcClient.getService(peer);
                 if (service != null) {
-                    raftThreadPool.getExecutorService().submit(() -> {
+                    Future<?> RPCTask = raftThreadPool.getExecutorService().submit(() -> {
                         try {
                             RequestVoteResult requestVoteResult = service.requestVote(requestVoteParam);
                             latch.countDown();
@@ -76,7 +82,12 @@ public class Election implements Runnable{
                         } catch (Exception e) {
                             logger.info("Fail to send request vote to " + peer);
                         }
+                        finally {
+                            //remove itself from RPCTaskMap
+                            RPCTaskMap.remove(peer);
+                        }
                     });
+                    RPCTaskMap.put(peer,RPCTask);
                 }
             }
 
@@ -96,6 +107,9 @@ public class Election implements Runnable{
             }
         }catch (InterruptedException e){
             logger.warn("Election is Interrupted!");
+            for(Future<?> RPCTask: RPCTaskMap.values()){
+                RPCTask.cancel(true);
+            }
         }
 
 

@@ -18,15 +18,22 @@ public class Node implements LifeCycle{
     private NodeConfig nodeConfig;
     private LogSystem log;
     private volatile Status nodeStatus = Status.FOLLOWER;
+    private volatile Role role = new follower();
     private volatile long electionTime;
     private volatile int currentTerm;
     private volatile String votedFor;
     private ConcurrentHashMap<String, Integer> nextIndex;
     private ConcurrentHashMap<String, Integer> matchIndex;
 
+    @Autowired
+    private ElectionTimer electionTimer;
+
+    @Autowired
+    private HeartBeat heartBeat;
+
     @Override
     public void init() {
-        
+
     }
 
     @Override
@@ -34,11 +41,11 @@ public class Node implements LifeCycle{
 
     }
 
-    public class follower implements LifeCycle{
+    public class follower implements Role{
 
         @Override
         public void init() {
-
+            nodeStatus = Status.FOLLOWER;
         }
 
         @Override
@@ -47,29 +54,36 @@ public class Node implements LifeCycle{
         }
     }
 
-    public class candidate implements LifeCycle{
+    public class candidate implements Role{
+
+        Thread thread;
 
         @Override
         public void init() {
-
+            nodeStatus = Status.CANDIDATE;
+            thread = new Thread(new Election());
+            thread.start();
         }
 
         @Override
         public void stop() {
-
+            thread.interrupt();
         }
     }
 
-    public class leader implements LifeCycle{
+    public class leader implements Role{
 
         @Override
         public void init() {
-
+            nodeStatus = Status.LEADER;
+            heartBeat.init();
+            electionTimer.stop();
         }
 
         @Override
         public void stop() {
-
+            heartBeat.stop();
+            electionTimer.init();
         }
     }
 

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -31,8 +33,9 @@ public class HeartBeat implements Runnable,LifeCycle{
         if (heartbeatTask != null && !heartbeatTask.isDone()) {
             heartbeatTask.cancel(true);
         }
-        heartbeatTask = raftThreadPool.getScheduledExecutorService().schedule(
+        heartbeatTask = raftThreadPool.getScheduledExecutorService().scheduleWithFixedDelay(
                 new HeartBeat(),
+                0,
                 node.getNodeConfig().getHeartBeatFrequent(),
                 TimeUnit.MILLISECONDS);
         raftThreadPool.setHeartbeatTask(heartbeatTask);
@@ -48,38 +51,51 @@ public class HeartBeat implements Runnable,LifeCycle{
 
     @Override
     public void run() {
-        Node node = SpringContextUtil.getBean(Node.class);
-        RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
+        //use to interrupt task
+        ConcurrentHashMap<String, Future<?>> RPCTaskMap = new ConcurrentHashMap<>();
+        try {
+            Node node = SpringContextUtil.getBean(Node.class);
+            RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
 
-        if(node.getNodeStatus() != Status.LEADER){
-            logger.warn("Node start heartbeat when status: " + node.getNodeStatus());
-            return;
+            if (node.getNodeStatus() != Status.LEADER) {
+                logger.warn("Node start heartbeat when status: " + node.getNodeStatus());
+                return;
+            }
+
+            ArrayList<String> otherServers = node.getNodeConfig().getOtherServers();
+
+            for (String url : otherServers) {
+                RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
+                RaftConsensusService service = rpcClient.getService(url);
+                if (service != null) {
+                    Future<?> RPCTask = raftThreadPool.getExecutorService().submit(() -> {
+                        try {
+                            Integer prevLogIndex = node.getMatchIndex().get(url);
+                            int prevLogTerm = node.getLog().read(prevLogIndex).getTerm();
+                            AppendEntriesParam param = AppendEntriesParam.builder()
+                                    .term(node.getCurrentTerm())
+                                    .leaderId(node.getNodeConfig().getSelf())
+                                    .prevLogIndex(prevLogIndex)
+                                    .prevLogTerm(prevLogTerm)
+                                    .entries(null)
+                                    .leaderCommit(node.getLog().getCommitIndex())
+                                    .build();
+                            service.appendEntries(param);
+                        } catch (Exception e) {
+                            logger.info("Fail to send heartbeat to " + url);
+                        } finally {
+                            //remove itself from RPCTaskMap
+                            RPCTaskMap.remove(url);
+                        }
+                    });
+                    RPCTaskMap.put(url,RPCTask);
+                }
+            }
         }
-
-        ArrayList<String> otherServers = node.getNodeConfig().getOtherServers();
-
-        for(String url: otherServers){
-            RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
-            RaftConsensusService service = rpcClient.getService(url);
-            if(service != null){
-                raftThreadPool.getExecutorService().submit(()->{
-                    try {
-                        Integer prevLogIndex = node.getMatchIndex().get(url);
-                        int prevLogTerm = node.getLog().read(prevLogIndex).getTerm();
-                        AppendEntriesParam param = AppendEntriesParam.builder()
-                                .term(node.getCurrentTerm())
-                                .leaderId(node.getNodeConfig().getSelf())
-                                .prevLogIndex(prevLogIndex)
-                                .prevLogTerm(prevLogTerm)
-                                .entries(null)
-                                .leaderCommit(node.getLog().getCommitIndex())
-                                .build();
-                        service.appendEntries(param);
-                    }
-                    catch (Exception e){
-                        logger.info("Fail to send heartbeat to " + url);
-                    }
-                });
+        catch (Exception e){
+            logger.warn("HeartBeat is Interrupted!");
+            for(Future<?> RPCTask: RPCTaskMap.values()){
+                RPCTask.cancel(true);
             }
         }
 

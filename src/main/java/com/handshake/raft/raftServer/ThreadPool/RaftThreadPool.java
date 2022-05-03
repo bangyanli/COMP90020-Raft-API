@@ -26,6 +26,7 @@ public class RaftThreadPool implements LifeCycle {
         scheduledExecutorService = Executors.newScheduledThreadPool(2);
     }
 
+
     @Override
     public void stop() {
         executorService.shutdown();
