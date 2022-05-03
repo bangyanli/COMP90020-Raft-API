@@ -25,20 +25,13 @@ public class Node implements LifeCycle{
     private ConcurrentHashMap<String, Integer> nextIndex;
     private ConcurrentHashMap<String, Integer> matchIndex;
 
-<<<<<<< HEAD
-=======
     private volatile String leaderId;
 
->>>>>>> 92329ba130de1293715bf07df81b0b26aab3afb3
     //@Autowired
     private ElectionTimer electionTimer;
 
     //@Autowired
-<<<<<<< HEAD
-    private HeartBeat heartBeat;
-=======
     private Heartbeat heartBeat;
->>>>>>> 92329ba130de1293715bf07df81b0b26aab3afb3
 
     @Override
     public void init() {
