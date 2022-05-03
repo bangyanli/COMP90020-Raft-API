@@ -1,7 +1,9 @@
-package com.handshake.raft.dto;
+package com.handshake.raft.raftServer.proto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.handshake.raft.raftServer.proto.Impl.CreateBookCommand;
+import com.handshake.raft.raftServer.proto.Impl.UploadChapterCommand;
 
 import java.io.Serializable;
 

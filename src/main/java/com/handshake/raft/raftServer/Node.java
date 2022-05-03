@@ -1,7 +1,7 @@
 package com.handshake.raft.raftServer;
 
 import com.handshake.raft.config.NodeConfig;
-import com.handshake.raft.log.LogSystem;
+import com.handshake.raft.raftServer.log.LogSystem;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

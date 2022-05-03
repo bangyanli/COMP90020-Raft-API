@@ -1,4 +1,4 @@
-package com.handshake.raft.protocals;
+package com.handshake.raft.raftServer.service;
 
 public interface LifeCycle {
 

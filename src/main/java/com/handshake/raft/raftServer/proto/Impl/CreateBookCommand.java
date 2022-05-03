@@ -1,7 +1,8 @@
-package com.handshake.raft.dto;
+package com.handshake.raft.raftServer.proto.Impl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.handshake.raft.raftServer.proto.Command;
 import com.handshake.raft.service.BookService;
 import com.handshake.raft.service.Impl.BookServiceImpl;
 import lombok.Builder;
@@ -9,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CreateBookCommand implements Command{
+public class CreateBookCommand implements Command {
 
     public static BookService bookService = new BookServiceImpl();
 

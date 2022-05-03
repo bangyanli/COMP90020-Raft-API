@@ -1,9 +1,9 @@
-package com.handshake.raft.log.Impl;
+package com.handshake.raft.raftServer.log.Impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.handshake.raft.common.utils.Json;
-import com.handshake.raft.dto.LogEntry;
-import com.handshake.raft.log.LogDatabase;
+import com.handshake.raft.raftServer.proto.LogEntry;
+import com.handshake.raft.raftServer.log.LogDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;

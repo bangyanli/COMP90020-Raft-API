@@ -1,7 +1,7 @@
 package com.handshake.raft.raftServer;
 
-import com.handshake.raft.dto.AppendEntriesParam;
-import com.handshake.raft.rpc.Request;
+import com.handshake.raft.raftServer.proto.AppendEntriesParam;
+import com.handshake.raft.raftServer.rpc.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

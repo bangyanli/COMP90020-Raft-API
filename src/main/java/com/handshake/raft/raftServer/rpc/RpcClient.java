@@ -1,4 +1,4 @@
-package com.handshake.raft.rpc;
+package com.handshake.raft.raftServer.rpc;
 import com.alipay.remoting.exception.RemotingException;
 import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.TimeUnit;

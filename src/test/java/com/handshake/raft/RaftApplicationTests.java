@@ -1,10 +1,10 @@
 package com.handshake.raft;
 
-import com.handshake.raft.dto.Command;
-import com.handshake.raft.dto.CreateBookCommand;
-import com.handshake.raft.dto.LogEntry;
-import com.handshake.raft.dto.UploadChapterCommand;
-import com.handshake.raft.log.Impl.Logdb;
+import com.handshake.raft.raftServer.proto.Command;
+import com.handshake.raft.raftServer.proto.Impl.CreateBookCommand;
+import com.handshake.raft.raftServer.proto.LogEntry;
+import com.handshake.raft.raftServer.proto.Impl.UploadChapterCommand;
+import com.handshake.raft.raftServer.log.Impl.Logdb;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @ExtendWith(SpringExtension.class)

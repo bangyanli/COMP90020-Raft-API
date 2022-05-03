@@ -1,4 +1,4 @@
-package com.handshake.raft.dto;
+package com.handshake.raft.raftServer.proto;
 
 import lombok.Builder;
 import lombok.Data;

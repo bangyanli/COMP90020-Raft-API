@@ -1,6 +1,6 @@
-package com.handshake.raft.log;
+package com.handshake.raft.raftServer.log;
 
-import com.handshake.raft.dto.LogEntry;
+import com.handshake.raft.raftServer.proto.LogEntry;
 
 public interface LogSystem {
 
