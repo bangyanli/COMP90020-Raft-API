@@ -1,6 +1,8 @@
 package com.handshake.raft;
 
 import com.handshake.raft.config.NodeConfig;
+import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
+import com.handshake.raft.raftServer.log.LogSystem;
 import com.handshake.raft.raftServer.rpc.RpcClient;
 import com.handshake.raft.raftServer.rpc.RpcServiceProvider;
 import org.slf4j.Logger;
@@ -25,10 +27,18 @@ public class init implements InitializingBean {
     @Autowired
     RpcClient rpcClient;
 
+    @Autowired
+    RaftThreadPool raftThreadPool;
+
+    @Autowired
+    LogSystem logSystem;
+
 
     @Override
     public void afterPropertiesSet() throws Exception {
         initLibrary();
+        logSystem.init();
+        raftThreadPool.init();
         rpcServiceProvider.init();
         rpcClient.init();
         logger.info(nodeConfig.toString());

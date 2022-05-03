@@ -1,12 +1,12 @@
 package com.handshake.raft.raftServer.log;
 
-import com.handshake.raft.raftServer.proto.LogEntry;
+import com.handshake.raft.raftServer.log.Impl.LogDatabaseImpl;
 
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public interface LogDatabase {
 
-    public void saveToLocal(CopyOnWriteArrayList<LogEntry> logEntries);
+    public void saveToLocal(LogInfo logInfo, ReentrantReadWriteLock lock);
 
-    public CopyOnWriteArrayList<LogEntry> readFromLocal();
+    public LogInfo readFromLocal(ReentrantReadWriteLock lock);
 }

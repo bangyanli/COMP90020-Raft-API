@@ -1,10 +1,13 @@
 package com.handshake.raft;
 
+import com.handshake.raft.raftServer.log.Impl.LogSystemImpl;
+import com.handshake.raft.raftServer.log.LogInfo;
+import com.handshake.raft.raftServer.log.LogSystem;
 import com.handshake.raft.raftServer.proto.Command;
 import com.handshake.raft.raftServer.proto.Impl.CreateBookCommand;
 import com.handshake.raft.raftServer.proto.LogEntry;
 import com.handshake.raft.raftServer.proto.Impl.UploadChapterCommand;
-import com.handshake.raft.raftServer.log.Impl.Logdb;
+import com.handshake.raft.raftServer.log.Impl.LogDatabaseImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +21,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -26,20 +32,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
 class RaftApplicationTests {
 
     @Autowired
-    Logdb logdb;
+    LogDatabaseImpl logdb;
+
+    @Autowired
+    LogSystem logSystem;
 
     @Test
     void testLogDatabase() {
-        CopyOnWriteArrayList<LogEntry> logEntries = new CopyOnWriteArrayList<>();
-        logEntries.add(new LogEntry(1,1,new CreateBookCommand("zzz","aaa","1","1")));
-        logEntries.add(new LogEntry(2,1,new CreateBookCommand("aaa","aaa","1","1")));
-        logEntries.add(new LogEntry(3,1,new CreateBookCommand("bbb","aaa","1","1")));
-        logEntries.add(new LogEntry(3,1,new UploadChapterCommand("zzz","aaa",createMultipartFile())));
-        logdb.saveToLocal(logEntries);
-        CopyOnWriteArrayList<LogEntry> logEntries1 = logdb.readFromLocal();
-        Command command = logEntries.get(logEntries.size() - 1).getCommand();
-        System.out.println(command.toString());
-        command.execute();
+//        HashMap<Integer,LogEntry> logEntries = new HashMap<>();
+//        ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+//        logEntries.put(1,new LogEntry(1,1,new CreateBookCommand("zzz","aaa","1","1")));
+//        logEntries.put(2,new LogEntry(2,1,new CreateBookCommand("aaa","aaa","1","1")));
+//        logEntries.put(3,new LogEntry(3,1,new CreateBookCommand("bbb","aaa","1","1")));
+//        logEntries.put(4,new LogEntry(4,1,new UploadChapterCommand("zzz","aaa",createMultipartFile())));
+//        LogInfo logInfo = new LogInfo(4, 1, logEntries);
+        System.out.println(logSystem.getCommitIndex());
+        LogEntry last = logSystem.getLast();
+        last.getCommand().execute();
+
     }
 
     private MultipartFile createMultipartFile(){

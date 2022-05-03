@@ -1,22 +1,100 @@
 package com.handshake.raft.raftServer.service.Impl;
 
-import com.handshake.raft.raftServer.proto.AppendEntriesParam;
-import com.handshake.raft.raftServer.proto.AppendEntriesResult;
-import com.handshake.raft.raftServer.proto.RequestVoteParam;
-import com.handshake.raft.raftServer.proto.RequestVoteResult;
+import com.handshake.raft.common.utils.SpringContextUtil;
+import com.handshake.raft.raftServer.Node;
+import com.handshake.raft.raftServer.Status;
+import com.handshake.raft.raftServer.log.Impl.LogSystemImpl;
+import com.handshake.raft.raftServer.log.LogSystem;
+import com.handshake.raft.raftServer.proto.*;
 import com.handshake.raft.raftServer.service.RaftConsensusService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 public class RaftConsensusServiceImpl implements RaftConsensusService {
 
+    private static Logger logger = LoggerFactory.getLogger(LogSystemImpl.class);
+    public static final ReentrantLock voteLock = new ReentrantLock();
+    public static final ReentrantLock appendLock = new ReentrantLock();
+
+    private Node node = SpringContextUtil.getBean(Node.class);
+    private LogSystem logSystem = SpringContextUtil.getBean(LogSystem.class);
+
+
     @Override
     public AppendEntriesResult appendEntries(AppendEntriesParam param) {
-        return null;
+        try {
+            appendLock.lock();
+            if (node.getNodeStatus() == Status.LEADER) {
+                logger.warn("Receive append entries when leader!");
+            }
+
+            //step 1
+            if (param.getTerm() < node.getCurrentTerm()) {
+                logger.info("Get appendEntries from smaller term!");
+                return new AppendEntriesResult(node.getCurrentTerm(), false);
+            }
+
+            //step 2
+            LogEntry logEntry = logSystem.read(param.getPrevLogIndex());
+            if (logEntry == null || logEntry.getTerm() != param.getPrevLogTerm()) {
+                return new AppendEntriesResult(node.getCurrentTerm(), false);
+            }
+
+            //TODO reset election timeout
+
+            //heartbeat
+            if (param.getEntries() == null || param.getEntries().size() == 0) {
+                return new AppendEntriesResult(node.getCurrentTerm(), true);
+            }
+
+            for (LogEntry leaderEntry : param.getEntries()) {
+                //step 3
+                logEntry = logSystem.read(leaderEntry.getIndex());
+                if (logEntry != null || logEntry.getTerm() != leaderEntry.getTerm()) {
+                    logger.info("Delete log with index " + logEntry.getIndex());
+                    logSystem.removeFromIndex(leaderEntry.getIndex());
+                }
+                //step 4
+                logSystem.write(leaderEntry);
+            }
+
+            //step 5
+            if (param.getLeaderCommit() > logSystem.getCommitIndex()) {
+                logSystem.setCommitIndex(Math.min(param.getLeaderCommit(),logSystem.getLast().getIndex()));
+            }
+
+            //success
+            return new AppendEntriesResult(node.getCurrentTerm(), true);
+        }
+        finally {
+            appendLock.unlock();
+        }
+
     }
 
 
     @Override
     public RequestVoteResult requestVote(RequestVoteParam param) {
-        return null;
+        try{
+            voteLock.lock();
+            //step 1
+            if(param.getTerm() < node.getCurrentTerm()){
+                return new RequestVoteResult(node.getCurrentTerm(),false);
+            }
+            //step 2
+            if(node.getVotedFor() == null || node.getVotedFor() == param.getCandidateId()){
+                LogEntry lastLogEntry = logSystem.getLast();
+                if(param.getLastLogIndex() >= lastLogEntry.getIndex() && param.getLastLogTerm() >= lastLogEntry.getTerm()){
+                    return new RequestVoteResult(node.getCurrentTerm(),true);
+                }
+            }
+            return new RequestVoteResult(node.getCurrentTerm(),false);
+        }
+        finally {
+            voteLock.unlock();
+        }
     }
 
 }

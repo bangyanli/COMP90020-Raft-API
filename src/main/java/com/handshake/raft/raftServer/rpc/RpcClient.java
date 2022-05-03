@@ -2,7 +2,7 @@ package com.handshake.raft.raftServer.rpc;
 
 import com.alipay.sofa.rpc.config.ConsumerConfig;
 import com.handshake.raft.config.NodeConfig;
-import com.handshake.raft.raftServer.service.LifeCycle;
+import com.handshake.raft.raftServer.LifeCycle;
 import com.handshake.raft.raftServer.service.RaftConsensusService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,13 +56,6 @@ public class RpcClient implements LifeCycle {
         for(ConsumerConfig<RaftConsensusService> consumerConfig: serverHashMap.values()){
             consumerConfig.unRefer();
         }
-    }
-
-    public static void startClient() {
-        ConsumerConfig<RaftConsensusService> consumerConfig = new ConsumerConfig<RaftConsensusService>()
-                .setInterfaceId(RaftConsensusService.class.getName()) // 指定接口
-                .setProtocol("bolt") // 指定协议
-                .setDirectUrl("bolt://127.0.0.1:12200"); // 指定直连地址
     }
 
 }

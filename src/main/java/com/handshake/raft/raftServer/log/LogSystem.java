@@ -1,16 +1,31 @@
 package com.handshake.raft.raftServer.log;
 
+import com.handshake.raft.raftServer.LifeCycle;
 import com.handshake.raft.raftServer.proto.LogEntry;
 
-public interface LogSystem {
+public interface LogSystem extends LifeCycle {
 
-    public void add();
+    public int getCommitIndex();
 
-    public LogEntry read(Long index);
+    public void setCommitIndex(int commitIndex);
 
-    public void removeLastIndex();
+    public int getLastApplied();
 
+    public void write(LogEntry logEntry);
+
+    public LogEntry read(int index);
+
+    /**
+     * remove from index(include the index itself)
+     */
+    public void removeFromIndex(int index);
+
+    /**
+     * get last by the size of map
+     * need change when snapshot installed
+     * @return logEntry with biggest entry
+     */
     public LogEntry getLast();
 
-    public void applyLog();
+    public void applyLog(int index);
 }

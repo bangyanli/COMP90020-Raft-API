@@ -5,7 +5,7 @@ import com.alipay.sofa.rpc.config.ServerConfig;
 import com.handshake.raft.common.utils.IpUtil;
 import com.handshake.raft.config.NodeConfig;
 import com.handshake.raft.raftServer.service.Impl.RaftConsensusServiceImpl;
-import com.handshake.raft.raftServer.service.LifeCycle;
+import com.handshake.raft.raftServer.LifeCycle;
 import com.handshake.raft.raftServer.service.RaftConsensusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

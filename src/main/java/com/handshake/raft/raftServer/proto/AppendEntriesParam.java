@@ -13,7 +13,8 @@ public class AppendEntriesParam {
 
     int term;
     String leaderId;
-    Long prevLogIndex;
+    int prevLogIndex;
+    int prevLogTerm;
     ArrayList<LogEntry> entries;
     int leaderCommit;
 

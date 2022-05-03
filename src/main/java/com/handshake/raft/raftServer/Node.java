@@ -22,10 +22,10 @@ public class Node {
     private volatile long lastElectionTime;
     private volatile int currentTerm;
     private volatile String votedFor;
-    private volatile int commitIndex;
-    private volatile int lastApplied;
     private ConcurrentHashMap<String, Integer> nextIndex;
     private ConcurrentHashMap<String, Integer> matchIndex;
+
+
 
 
 }
