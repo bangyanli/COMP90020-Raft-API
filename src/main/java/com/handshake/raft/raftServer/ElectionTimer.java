@@ -30,7 +30,7 @@ public class ElectionTimer implements Runnable,LifeCycle{
         }
         electionTimer = raftThreadPool.getScheduledExecutorService().scheduleWithFixedDelay(
                 new ElectionTimer(),
-                0,
+                node.getNodeConfig().getElectionTimeout() + ThreadLocalRandom.current().nextInt(100),
                 node.getNodeConfig().getElectionTimeout() + ThreadLocalRandom.current().nextInt(100),
                 TimeUnit.MILLISECONDS);
         raftThreadPool.setElectionTimer(electionTimer);

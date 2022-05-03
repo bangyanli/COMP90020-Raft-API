@@ -3,7 +3,6 @@ package com.handshake.raft.raftServer.log.Impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.handshake.raft.common.utils.Json;
 import com.handshake.raft.raftServer.log.LogInfo;
-import com.handshake.raft.raftServer.proto.LogEntry;
 import com.handshake.raft.raftServer.log.LogDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Repository

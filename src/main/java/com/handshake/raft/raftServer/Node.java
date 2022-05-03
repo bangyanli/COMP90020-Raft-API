@@ -25,11 +25,13 @@ public class Node implements LifeCycle{
     private ConcurrentHashMap<String, Integer> nextIndex;
     private ConcurrentHashMap<String, Integer> matchIndex;
 
-    @Autowired
+    private volatile String leaderId;
+
+    //@Autowired
     private ElectionTimer electionTimer;
 
-    @Autowired
-    private HeartBeat heartBeat;
+    //@Autowired
+    private Heartbeat heartBeat;
 
     @Override
     public void init() {
@@ -52,6 +54,11 @@ public class Node implements LifeCycle{
         public void stop() {
 
         }
+
+        @Override
+        public Status getName() {
+            return Status.FOLLOWER;
+        }
     }
 
     public class candidate implements Role{
@@ -61,6 +68,11 @@ public class Node implements LifeCycle{
         @Override
         public void init() {
             nodeStatus = Status.CANDIDATE;
+            //reset electionTimer
+            electionTimer.stop();
+            electionTimer.init();
+
+            //start election
             thread = new Thread(new Election());
             thread.start();
         }
@@ -69,6 +81,11 @@ public class Node implements LifeCycle{
         public void stop() {
             thread.interrupt();
         }
+
+        @Override
+        public Status getName() {
+            return Status.CANDIDATE;
+        }
     }
 
     public class leader implements Role{
@@ -76,6 +93,16 @@ public class Node implements LifeCycle{
         @Override
         public void init() {
             nodeStatus = Status.LEADER;
+            leaderId = nodeConfig.getSelf();
+            //set state on leaders
+            nextIndex = new ConcurrentHashMap<>();
+            matchIndex = new ConcurrentHashMap<>();
+            for(String peer: nodeConfig.getOtherServers()){
+                nextIndex.put(peer, log.getLast().getIndex());
+                matchIndex.put(peer,0);
+            }
+
+            //start heartbeat
             heartBeat.init();
             electionTimer.stop();
         }
@@ -84,6 +111,11 @@ public class Node implements LifeCycle{
         public void stop() {
             heartBeat.stop();
             electionTimer.init();
+        }
+
+        @Override
+        public Status getName() {
+            return Status.LEADER;
         }
     }
 
