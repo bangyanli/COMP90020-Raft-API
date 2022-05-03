@@ -1,6 +1,7 @@
 package com.handshake.raft.raftServer.service.Impl;
 
 import com.handshake.raft.common.utils.SpringContextUtil;
+import com.handshake.raft.raftServer.ElectionTimer;
 import com.handshake.raft.raftServer.Node;
 import com.handshake.raft.raftServer.Status;
 import com.handshake.raft.raftServer.log.Impl.LogSystemImpl;
@@ -20,6 +21,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
 
     private Node node = SpringContextUtil.getBean(Node.class);
     private LogSystem logSystem = SpringContextUtil.getBean(LogSystem.class);
+    private ElectionTimer electionTimer = SpringContextUtil.getBean(ElectionTimer.class);
 
 
     @Override
@@ -48,7 +50,10 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 return new AppendEntriesResult(node.getCurrentTerm(), false);
             }
 
-            //TODO reset election timeout
+            //set leader
+            node.setLeaderId(param.getLeaderId());
+            //reset election timeout
+            electionTimer.init();
 
             //heartbeat
             if (param.getEntries() == null || param.getEntries().size() == 0) {

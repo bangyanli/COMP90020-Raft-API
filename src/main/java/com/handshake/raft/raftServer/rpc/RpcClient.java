@@ -27,7 +27,7 @@ public class RpcClient implements LifeCycle {
      * @param ip ip of remove server
      * @return rpc service or null
      */
-    public RaftConsensusService getService(String ip){
+    public RaftConsensusService connectToService(String ip){
         ConsumerConfig<RaftConsensusService> consumerConfig = serverHashMap.get(ip);
         RaftConsensusService raftConsensusService = null;
         try {

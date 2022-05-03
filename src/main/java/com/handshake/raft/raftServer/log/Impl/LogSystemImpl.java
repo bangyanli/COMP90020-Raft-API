@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -98,6 +99,24 @@ public class LogSystemImpl implements LogSystem {
 
     }
 
+    @Override
+    public ArrayList<LogEntry> getLogFromIndex(int index) {
+        ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
+        readLock.lock();
+
+        ArrayList<LogEntry> logEntryArrayList = new ArrayList<>();
+        for(int i=index;i<logEntries.size();i++){
+            LogEntry logEntry = logEntries.get(index);
+            if(logEntry == null){
+                logger.warn("Read illegal index: " + index + " when index do not exist! {}", "getLogFromIndex");
+            }
+            else {
+                logEntryArrayList.add(logEntry);
+            }
+        }
+        readLock.unlock();
+        return logEntryArrayList;
+    }
 
     @Override
     public LogEntry getLast() {
@@ -113,11 +132,11 @@ public class LogSystemImpl implements LogSystem {
     }
 
     @Override
-    public void applyLog(int index) {
+    public void applyLog() {
 
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
         readLock.lock();
-        for(int i = lastApplied+1; i <= index; i++){
+        for(int i = lastApplied+1; i <= commitIndex; i++){
             LogEntry logEntry = logEntries.get(i);
             if(logEntry != null){
                 if(logEntry.getCommand() != null) {

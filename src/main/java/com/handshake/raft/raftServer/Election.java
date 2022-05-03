@@ -3,7 +3,6 @@ package com.handshake.raft.raftServer;
 import com.handshake.raft.common.utils.SpringContextUtil;
 import com.handshake.raft.config.NodeConfig;
 import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
-import com.handshake.raft.raftServer.proto.AppendEntriesParam;
 import com.handshake.raft.raftServer.proto.LogEntry;
 import com.handshake.raft.raftServer.proto.RequestVoteParam;
 import com.handshake.raft.raftServer.proto.RequestVoteResult;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,6 +28,7 @@ public class Election implements Runnable{
 
     private final Node node = SpringContextUtil.getBean(Node.class);
     private final RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
+    private final RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
 
     @Override
     public void run() {
@@ -64,8 +63,7 @@ public class Election implements Runnable{
             //use to wait result
             CountDownLatch latch = new CountDownLatch(peers.size());
             for (String peer : peers) {
-                RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
-                RaftConsensusService service = rpcClient.getService(peer);
+                RaftConsensusService service = rpcClient.connectToService(peer);
                 if (service != null) {
                     Future<?> RPCTask = raftThreadPool.getExecutorService().submit(() -> {
                         try {

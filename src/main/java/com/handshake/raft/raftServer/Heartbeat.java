@@ -3,6 +3,8 @@ package com.handshake.raft.raftServer;
 import com.handshake.raft.common.utils.SpringContextUtil;
 import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import com.handshake.raft.raftServer.proto.AppendEntriesParam;
+import com.handshake.raft.raftServer.proto.AppendEntriesResult;
+import com.handshake.raft.raftServer.proto.LogEntry;
 import com.handshake.raft.raftServer.rpc.RpcClient;
 import com.handshake.raft.raftServer.service.RaftConsensusService;
 import org.slf4j.Logger;
@@ -11,15 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 @Component
-public class HeartBeat implements Runnable,LifeCycle{
+public class Heartbeat implements Runnable,LifeCycle{
 
-    private static final Logger logger = LoggerFactory.getLogger(HeartBeat.class);
+    private static final Logger logger = LoggerFactory.getLogger(Heartbeat.class);
 
     @Autowired
     private Node node;
@@ -34,7 +35,7 @@ public class HeartBeat implements Runnable,LifeCycle{
             heartbeatTask.cancel(true);
         }
         heartbeatTask = raftThreadPool.getScheduledExecutorService().scheduleWithFixedDelay(
-                new HeartBeat(),
+                new Heartbeat(),
                 0,
                 node.getNodeConfig().getHeartBeatFrequent(),
                 TimeUnit.MILLISECONDS);
@@ -56,6 +57,7 @@ public class HeartBeat implements Runnable,LifeCycle{
         try {
             Node node = SpringContextUtil.getBean(Node.class);
             RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
+            RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
 
             if (node.getNodeStatus() != Status.LEADER) {
                 logger.warn("Node start heartbeat when status: " + node.getNodeStatus());
@@ -63,24 +65,40 @@ public class HeartBeat implements Runnable,LifeCycle{
             }
 
             ArrayList<String> otherServers = node.getNodeConfig().getOtherServers();
+            //use to wait result
+            CountDownLatch latch = new CountDownLatch(otherServers.size()/2);
 
             for (String url : otherServers) {
-                RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
-                RaftConsensusService service = rpcClient.getService(url);
+                RaftConsensusService service = rpcClient.connectToService(url);
                 if (service != null) {
                     Future<?> RPCTask = raftThreadPool.getExecutorService().submit(() -> {
                         try {
-                            Integer prevLogIndex = node.getMatchIndex().get(url);
+                            int nextIndex = node.getNextIndex().get(url);
+                            int prevLogIndex = (nextIndex - 1);
                             int prevLogTerm = node.getLog().read(prevLogIndex).getTerm();
+                            ArrayList<LogEntry> logEntries = null;
+                            if(nextIndex <= node.getLog().getLast().getIndex()){
+                                logEntries = node.getLog().getLogFromIndex(nextIndex);
+                            }
                             AppendEntriesParam param = AppendEntriesParam.builder()
                                     .term(node.getCurrentTerm())
                                     .leaderId(node.getNodeConfig().getSelf())
                                     .prevLogIndex(prevLogIndex)
                                     .prevLogTerm(prevLogTerm)
-                                    .entries(null)
+                                    .entries(logEntries)
                                     .leaderCommit(node.getLog().getCommitIndex())
                                     .build();
-                            service.appendEntries(param);
+                            AppendEntriesResult appendEntriesResult = service.appendEntries(param);
+                            if (appendEntriesResult.getTerm() > node.getCurrentTerm()) {
+                                logger.info("Get requestVoteResult from bigger term!");
+                                node.setCurrentTerm(appendEntriesResult.getTerm());
+                                //TODO convert to follower
+                            }
+                            if(appendEntriesResult.getSuccess()){
+                                latch.countDown();
+                                //node.getNextIndex().put(url,)
+                            }
+
                         } catch (Exception e) {
                             logger.info("Fail to send heartbeat to " + url);
                         } finally {
@@ -91,6 +109,7 @@ public class HeartBeat implements Runnable,LifeCycle{
                     RPCTaskMap.put(url,RPCTask);
                 }
             }
+            latch.await(3500, MILLISECONDS);
         }
         catch (Exception e){
             logger.warn("HeartBeat is Interrupted!");
