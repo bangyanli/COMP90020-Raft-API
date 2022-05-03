@@ -36,6 +36,12 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 return new AppendEntriesResult(node.getCurrentTerm(), false);
             }
 
+            if(param.getTerm() > node.getCurrentTerm()){
+                logger.info("Get appendEntries from bigger term!");
+                node.setCurrentTerm(param.getTerm());
+                //TODO convert to follower
+            }
+
             //step 2
             LogEntry logEntry = logSystem.read(param.getPrevLogIndex());
             if (logEntry == null || logEntry.getTerm() != param.getPrevLogTerm()) {
@@ -83,8 +89,13 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
             if(param.getTerm() < node.getCurrentTerm()){
                 return new RequestVoteResult(node.getCurrentTerm(),false);
             }
+            if(param.getTerm() > node.getCurrentTerm()){
+                logger.info("Get RequestVote from bigger term!");
+                node.setCurrentTerm(param.getTerm());
+                //TODO convert to follower
+            }
             //step 2
-            if(node.getVotedFor() == null || node.getVotedFor() == param.getCandidateId()){
+            if(node.getVotedFor() == null || node.getVotedFor().equals(param.getCandidateId())){
                 LogEntry lastLogEntry = logSystem.getLast();
                 if(param.getLastLogIndex() >= lastLogEntry.getIndex() && param.getLastLogTerm() >= lastLogEntry.getTerm()){
                     return new RequestVoteResult(node.getCurrentTerm(),true);

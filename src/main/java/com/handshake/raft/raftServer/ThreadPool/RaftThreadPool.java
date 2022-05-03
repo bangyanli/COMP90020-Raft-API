@@ -12,7 +12,7 @@ public class RaftThreadPool implements LifeCycle {
 
     private ExecutorService executorService;
     private ScheduledExecutorService scheduledExecutorService;
-    private ScheduledFuture electionTask = null;
+    private ScheduledFuture electionTimer = null;
     private ScheduledFuture heartbeatTask = null;
 
     @Override

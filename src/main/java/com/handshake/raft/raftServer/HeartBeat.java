@@ -48,6 +48,8 @@ public class HeartBeat implements Runnable,LifeCycle{
 
     @Override
     public void run() {
+        Node node = SpringContextUtil.getBean(Node.class);
+        RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
 
         if(node.getNodeStatus() != Status.LEADER){
             logger.warn("Node start heartbeat when status: " + node.getNodeStatus());
