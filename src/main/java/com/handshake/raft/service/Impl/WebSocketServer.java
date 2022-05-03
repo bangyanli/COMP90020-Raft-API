@@ -1,78 +1,50 @@
 package com.handshake.raft.service.Impl;
-
+import com.handshake.raft.raftServer.Node;
+import com.handshake.raft.raftServer.proto.LogEntry;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
-@ServerEndpoint("/raft/{userId}")
+@ServerEndpoint("/raft/{portId}")
 @Service
+@Getter
+@Setter
 public class WebSocketServer {
-
+    private Session session;
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
-
-    private static final AtomicInteger onlineNum = new AtomicInteger();
-
-    private static final ConcurrentHashMap<String, Session> sessionMap = new ConcurrentHashMap<>();
+    @Autowired
+    private Node node;
+    private String port = node.getNodeConfig().getSelf();
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("userId") String userId){
-        if(sessionMap.containsKey(userId)){
-            sessionMap.remove(userId);
-            sessionMap.put(userId,session);
-        }
-        else {
-            sessionMap.put(userId,session);
-            addOnlineCount();
-        }
-        logger.info("User: " + userId + " connect to web socket.");
-
-    }
-
-    @OnClose
-    public void OnClose(@PathParam("userId") String userId){
-        if(sessionMap.containsKey(userId)){
-            sessionMap.remove(userId);
-            subOnlineCount();
-        }
-        logger.info("User: " + userId + " disconnect from web socket.");
-
-    }
-
-    @OnError
-    public void onError(Throwable throwable){
-        logger.warn(throwable.getMessage());
-    }
-
-    /**
-     * send message to all online user
-     * @param message message to send
-     */
-    public static void broadcastMessage(String message){
-        for(Session session: sessionMap.values()){
-            try{
-                session.getBasicRemote().sendText(message);
+    public void onOpen(Session session, @PathParam("portId") String portId){
+        session = this.session;
+        System.out.println("websocketet connected, session id: " + session.getId());
+        if(!portId.equals(port) && session!=null) {
+            try {
+                session.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            catch (IOException e){
-                logger.warn(e.getMessage());
+        }else{
+            //TODO:implement logs
+            //LogEntry logEntry = node.getLog().getLast();
+            //session.getBasicRemote().sendObject(logEntry);
+            try {
+                session.getBasicRemote().sendText("Hello World");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
-
-    public static void addOnlineCount(){
-        onlineNum.incrementAndGet();
-    }
-
-    public static void subOnlineCount() {
-        onlineNum.decrementAndGet();
-    }
-
 
 
 

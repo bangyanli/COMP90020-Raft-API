@@ -25,10 +25,10 @@ public class Node implements LifeCycle{
     private ConcurrentHashMap<String, Integer> nextIndex;
     private ConcurrentHashMap<String, Integer> matchIndex;
 
-    @Autowired
+    //@Autowired
     private ElectionTimer electionTimer;
 
-    @Autowired
+    //@Autowired
     private HeartBeat heartBeat;
 
     @Override
