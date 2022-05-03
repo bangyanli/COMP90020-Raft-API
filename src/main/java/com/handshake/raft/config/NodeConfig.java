@@ -17,6 +17,7 @@ public class NodeConfig {
     private String self;
     private volatile long electionTimeout;
     private long heartBeatFrequent;
+    private String log;
 
     public ArrayList<String> getOtherServers(){
         ArrayList<String> otherServers = new ArrayList<>(servers);

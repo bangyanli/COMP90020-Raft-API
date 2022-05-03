@@ -1,9 +1,12 @@
 package com.handshake.raft.raftServer;
 
+import com.handshake.raft.common.utils.SpringContextUtil;
 import com.handshake.raft.config.NodeConfig;
 import com.handshake.raft.raftServer.log.LogSystem;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Setter
 public class Node implements LifeCycle{
 
+    private static final Logger logger = LoggerFactory.getLogger(Node.class);
+
     @Autowired
     private NodeConfig nodeConfig;
+    @Autowired
     private LogSystem log;
     private volatile Status nodeStatus = Status.FOLLOWER;
     private volatile Role role = new follower();
@@ -27,20 +33,36 @@ public class Node implements LifeCycle{
 
     private volatile String leaderId;
 
-    //@Autowired
     private ElectionTimer electionTimer;
-
-    //@Autowired
-    private Heartbeat heartBeat;
+    private Heartbeat heartbeat;
 
     @Override
     public void init() {
-
+        electionTimer = SpringContextUtil.getBean(ElectionTimer.class);
+        electionTimer.init();
+        heartbeat = SpringContextUtil.getBean(Heartbeat.class);
     }
 
     @Override
     public void stop() {
+        electionTimer.stop();
+        heartbeat.stop();
+    }
 
+    public void setNodeStatus(Status nodeStatus) {
+        Status prevStatus = this.nodeStatus;
+        role.stop();
+        if(nodeStatus == Status.FOLLOWER){
+            role = new follower();
+            role.init();
+        }else if(nodeStatus == Status.CANDIDATE) {
+            role = new candidate();
+            role.init();
+        }else if(nodeStatus == Status.LEADER){
+            role = new leader();
+            role.init();
+        }
+        logger.info("Node {} become {}", nodeConfig.getSelf(), nodeStatus);
     }
 
     public class follower implements Role{
@@ -98,18 +120,18 @@ public class Node implements LifeCycle{
             nextIndex = new ConcurrentHashMap<>();
             matchIndex = new ConcurrentHashMap<>();
             for(String peer: nodeConfig.getOtherServers()){
-                nextIndex.put(peer, log.getLast().getIndex());
+                nextIndex.put(peer, log.getLastIndex()+1);
                 matchIndex.put(peer,0);
             }
 
             //start heartbeat
-            heartBeat.init();
+            heartbeat.init();
             electionTimer.stop();
         }
 
         @Override
         public void stop() {
-            heartBeat.stop();
+            heartbeat.stop();
             electionTimer.init();
         }
 

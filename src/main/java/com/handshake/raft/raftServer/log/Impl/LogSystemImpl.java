@@ -132,6 +132,26 @@ public class LogSystemImpl implements LogSystem {
     }
 
     @Override
+    public int getLastIndex() {
+        if(logEntries.size() != 0){
+            LogEntry last = getLast();
+            return last.getIndex();
+        }else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int getLastTerm() {
+        if(logEntries.size() != 0){
+            LogEntry last = getLast();
+            return last.getTerm();
+        }else {
+            return 0;
+        }
+    }
+
+    @Override
     public void applyLog() {
 
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();

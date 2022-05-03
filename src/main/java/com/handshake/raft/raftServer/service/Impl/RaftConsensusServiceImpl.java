@@ -41,7 +41,8 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
             if(param.getTerm() > node.getCurrentTerm()){
                 logger.info("Get appendEntries from bigger term!");
                 node.setCurrentTerm(param.getTerm());
-                //TODO convert to follower
+                //convert to follower
+                node.setNodeStatus(Status.FOLLOWER);
             }
 
             //step 2
@@ -73,8 +74,10 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
 
             //step 5
             if (param.getLeaderCommit() > logSystem.getCommitIndex()) {
-                logSystem.setCommitIndex(Math.min(param.getLeaderCommit(),logSystem.getLast().getIndex()));
+                logSystem.setCommitIndex(Math.min(param.getLeaderCommit(),logSystem.getLastIndex()));
             }
+
+            logSystem.applyLog();
 
             //success
             return new AppendEntriesResult(node.getCurrentTerm(), true);
@@ -95,14 +98,13 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 return new RequestVoteResult(node.getCurrentTerm(),false);
             }
             if(param.getTerm() > node.getCurrentTerm()){
-                logger.info("Get RequestVote from bigger term!");
                 node.setCurrentTerm(param.getTerm());
-                //TODO convert to follower
+                //convert to follower
+                node.setNodeStatus(Status.FOLLOWER);
             }
             //step 2
             if(node.getVotedFor() == null || node.getVotedFor().equals(param.getCandidateId())){
-                LogEntry lastLogEntry = logSystem.getLast();
-                if(param.getLastLogIndex() >= lastLogEntry.getIndex() && param.getLastLogTerm() >= lastLogEntry.getTerm()){
+                if(param.getLastLogIndex() >= logSystem.getLastIndex() && param.getLastLogTerm() >= logSystem.getLastTerm()){
                     return new RequestVoteResult(node.getCurrentTerm(),true);
                 }
             }

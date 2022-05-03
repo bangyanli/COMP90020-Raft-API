@@ -24,6 +24,7 @@ public class ElectionTimer implements Runnable,LifeCycle{
 
     @Override
     public void init() {
+        logger.debug("Reset election timer!");
         ScheduledFuture electionTimer = raftThreadPool.getElectionTimer();
         if (electionTimer != null && !electionTimer.isDone()) {
             electionTimer.cancel(true);
@@ -46,8 +47,15 @@ public class ElectionTimer implements Runnable,LifeCycle{
 
     @Override
     public void run() {
-        Node node = SpringContextUtil.getBean(Node.class);
-        logger.info("Change to candidate in Term" + node.getCurrentTerm());
-        //TODO change to candidate
+        try {
+            Node node = SpringContextUtil.getBean(Node.class);
+            logger.info("Change to candidate in Term {}", node.getCurrentTerm());
+            //change to candidate
+            node.setNodeStatus(Status.CANDIDATE);
+        }catch (Exception e){
+            logger.debug("ElectionTimer is interrupted!");
+            return;
+        }
+
     }
 }

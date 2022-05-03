@@ -2,11 +2,13 @@ package com.handshake.raft.service.Impl;
 
 import com.handshake.raft.common.exceptions.*;
 import com.handshake.raft.common.utils.Json;
+import com.handshake.raft.config.LibraryConfig;
 import com.handshake.raft.dao.BookInfo;
 import com.handshake.raft.service.BookService;
 import nonapi.io.github.classgraph.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -37,6 +39,9 @@ public class BookServiceImpl implements BookService {
 
     private static final String infoFile = "info.json";
 
+    @Autowired
+    LibraryConfig libraryConfig;
+
     /**
      * create a book
      * @param name the name of the book
@@ -44,7 +49,7 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public boolean createBook(String name, String author, String category, String description) {
-        File file = new File("library/" + name);
+        File file = new File(libraryConfig.getAddress() + "/" + name);
         if(file.exists()){
             throw new BookAlreadyExistException();
         }
@@ -54,7 +59,7 @@ public class BookServiceImpl implements BookService {
 
         //store basic information for the book
         BookInfo bookInfo = new BookInfo(name, author, category, description);
-        File bookInfoFile = new File("library/" + name + "/" + infoFile);
+        File bookInfoFile = new File(libraryConfig.getAddress() + "/" + name + "/" + infoFile);
 
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
         writeLock.lock();
@@ -78,7 +83,7 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public BookInfo getBookInfo(String name) {
-        File bookInfoFile = new File("library/" + name + "/" + infoFile);
+        File bookInfoFile = new File(libraryConfig.getAddress() + "/" + name + "/" + infoFile);
         if(!bookInfoFile.exists()){
             throw new BookNotExistException();
         }
@@ -103,7 +108,7 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public String[] getBookIndex(String name) {
-        File file = new File("library/" + name);
+        File file = new File(libraryConfig.getAddress() + "/" + name);
         if(!file.exists()){
             throw new BookNotExistException();
         }
@@ -120,10 +125,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public String getChapter(String name, String chapter) {
         //sanity check
-        if(!new File("library/" + name).exists()){
+        if(!new File(libraryConfig.getAddress() + "/" + name).exists()){
             throw new BookNotExistException();
         }
-        File chapterFile = new File("library/" + name + "/" + chapter);
+        File chapterFile = new File(libraryConfig.getAddress() + "/" + name + "/" + chapter);
         if(!chapterFile.exists()){
             throw new ChapterNotExistException();
         }
@@ -151,11 +156,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public boolean uploadChapter(String name, String chapter, MultipartFile file) {
         //sanity check
-        if(!new File("library/" + name).exists()){
+        if(!new File(libraryConfig.getAddress() + "/" + name).exists()){
             throw new BookNotExistException();
         }
 
-        File bookChapterFile = new File("library/" + name + "/" + chapter);
+        File bookChapterFile = new File(libraryConfig.getAddress() + "/" + name + "/" + chapter);
 
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
         writeLock.lock();
@@ -181,11 +186,11 @@ public class BookServiceImpl implements BookService {
     @Override
     public boolean uploadChapter(String name, String chapter, String file) {
         //sanity check
-        if(!new File("library/" + name).exists()){
+        if(!new File(libraryConfig.getAddress() + "/" + name).exists()){
             throw new BookNotExistException();
         }
 
-        File bookChapterFile = new File("library/" + name + "/" + chapter);
+        File bookChapterFile = new File(libraryConfig.getAddress() + "/" + name + "/" + chapter);
 
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
         writeLock.lock();

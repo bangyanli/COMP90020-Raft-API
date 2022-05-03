@@ -2,6 +2,8 @@ package com.handshake.raft.raftServer.log.Impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.handshake.raft.common.utils.Json;
+import com.handshake.raft.common.utils.SpringContextUtil;
+import com.handshake.raft.config.NodeConfig;
 import com.handshake.raft.raftServer.log.LogInfo;
 import com.handshake.raft.raftServer.log.LogDatabase;
 import org.slf4j.Logger;
@@ -18,10 +20,11 @@ public class LogDatabaseImpl implements LogDatabase {
     private static final Logger logger = LoggerFactory.getLogger(LogDatabaseImpl.class);
 
     public void saveToLocal(LogInfo logInfo, ReentrantReadWriteLock lock){
+        NodeConfig nodeConfig = SpringContextUtil.getBean(NodeConfig.class);
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
         writeLock.lock();
         try {
-            Json.getInstance().writeValue(new File("log.json"),logInfo);
+            Json.getInstance().writeValue(new File(nodeConfig.getLog()),logInfo);
         } catch (IOException e) {
             logger.warn(e.getMessage(),e);
         }
@@ -31,15 +34,16 @@ public class LogDatabaseImpl implements LogDatabase {
     }
 
     public LogInfo readFromLocal(ReentrantReadWriteLock lock){
+        NodeConfig nodeConfig = SpringContextUtil.getBean(NodeConfig.class);
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
         readLock.lock();
         LogInfo logInfo = new LogInfo();
         try {
-            logInfo = Json.getInstance().readValue(new File("log.json"),
+            logInfo = Json.getInstance().readValue(new File(nodeConfig.getLog()),
                     new TypeReference<LogInfo>() {
             });
         } catch (IOException e) {
-            logger.warn(e.getMessage(),e);
+            logger.warn("Cannot read log from file!");
         }
         finally {
             readLock.unlock();

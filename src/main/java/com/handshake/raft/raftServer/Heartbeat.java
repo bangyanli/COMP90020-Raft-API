@@ -74,10 +74,17 @@ public class Heartbeat implements Runnable,LifeCycle{
                     Future<?> RPCTask = raftThreadPool.getExecutorService().submit(() -> {
                         try {
                             int nextIndex = node.getNextIndex().get(url);
-                            int prevLogIndex = (nextIndex - 1);
-                            int prevLogTerm = node.getLog().read(prevLogIndex).getTerm();
+                            //init when log is empty
+                            int prevLogIndex = 0;
+                            int prevLogTerm = 0;
+                            if(node.getLog().getLastIndex() != 0){
+                                prevLogIndex = (nextIndex - 1);
+                                prevLogTerm = node.getLog().read(prevLogIndex).getTerm();
+                            }
+
                             ArrayList<LogEntry> logEntries = null;
-                            if(nextIndex <= node.getLog().getLast().getIndex()){
+                            int lastIndex = node.getLog().getLastIndex();
+                            if(nextIndex <= lastIndex){
                                 logEntries = node.getLog().getLogFromIndex(nextIndex);
                             }
                             AppendEntriesParam param = AppendEntriesParam.builder()
@@ -92,14 +99,21 @@ public class Heartbeat implements Runnable,LifeCycle{
                             if (appendEntriesResult.getTerm() > node.getCurrentTerm()) {
                                 logger.info("Get requestVoteResult from bigger term!");
                                 node.setCurrentTerm(appendEntriesResult.getTerm());
-                                //TODO convert to follower
+                                //convert to follower
+                                node.setNodeStatus(Status.FOLLOWER);
                             }
                             if(appendEntriesResult.getSuccess()){
                                 latch.countDown();
-                                //node.getNextIndex().put(url,)
+                                //update the nextIndex and matchIndex
+                                node.getNextIndex().put(url,lastIndex + 1);
+                                node.getMatchIndex().put(url,lastIndex);
+                            }else {
+                                //fail decrement nextIndex
+                                node.getNextIndex().put(url,nextIndex - 1);
                             }
 
                         } catch (Exception e) {
+                            logger.info(e.getMessage(),e);
                             logger.info("Fail to send heartbeat to " + url);
                         } finally {
                             //remove itself from RPCTaskMap
@@ -109,10 +123,11 @@ public class Heartbeat implements Runnable,LifeCycle{
                     RPCTaskMap.put(url,RPCTask);
                 }
             }
+            //TODO update N such that N > commitIndex
             latch.await(3500, MILLISECONDS);
         }
         catch (Exception e){
-            logger.warn("HeartBeat is Interrupted!");
+            logger.debug("Heartbeat is Interrupted!");
             for(Future<?> RPCTask: RPCTaskMap.values()){
                 RPCTask.cancel(true);
             }

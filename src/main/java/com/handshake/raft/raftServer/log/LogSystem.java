@@ -34,5 +34,9 @@ public interface LogSystem extends LifeCycle {
      */
     public LogEntry getLast();
 
+    public int getLastIndex();
+
+    public int getLastTerm();
+
     public void applyLog();
 }

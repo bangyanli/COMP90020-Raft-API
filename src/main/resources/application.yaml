@@ -9,6 +9,10 @@ raft:
   self: "localhost:5001"
   electionTimeout: 15000
   heartBeatFrequent: 5000
+  log: "log.json"
+
+library:
+  address: "library"
 
 spring:
   mvc:

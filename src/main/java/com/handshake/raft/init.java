@@ -1,10 +1,13 @@
 package com.handshake.raft;
 
+import com.handshake.raft.config.LibraryConfig;
 import com.handshake.raft.config.NodeConfig;
+import com.handshake.raft.raftServer.Node;
 import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import com.handshake.raft.raftServer.log.LogSystem;
 import com.handshake.raft.raftServer.rpc.RpcClient;
 import com.handshake.raft.raftServer.rpc.RpcServiceProvider;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,6 +25,9 @@ public class init implements InitializingBean {
     NodeConfig nodeConfig;
 
     @Autowired
+    LibraryConfig libraryConfig;
+
+    @Autowired
     RpcServiceProvider rpcServiceProvider;
 
     @Autowired
@@ -33,22 +39,27 @@ public class init implements InitializingBean {
     @Autowired
     LogSystem logSystem;
 
+    @Autowired
+    Node node;
+
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        logger.info(nodeConfig.toString());
+        logger.info(libraryConfig.toString());
         initLibrary();
         logSystem.init();
         raftThreadPool.init();
         rpcServiceProvider.init();
         rpcClient.init();
-        logger.info(nodeConfig.toString());
+        node.init();
     }
 
     /**
      * create the library if it does not exist
      */
-    public static void initLibrary(){
-        File file = new File("library");
+    public void initLibrary(){
+        File file = new File(libraryConfig.getAddress());
         if(!file.exists()){
             if(!file.mkdir()){
                 System.out.println("Fail to make dictionary!");
