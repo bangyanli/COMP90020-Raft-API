@@ -7,11 +7,7 @@ import com.handshake.raft.raftServer.proto.RequestVoteResult;
 
 public interface RaftConsensusService {
 
-    AppendEntriesResult receiveAppendEntries(AppendEntriesParam param);
+    AppendEntriesResult appendEntries(AppendEntriesParam param);
 
-    Boolean replication(AppendEntriesParam param);
-
-    RequestVoteResult receiveRequestVote(RequestVoteParam param);
-
-    Boolean startElection(RequestVoteParam param);
+    RequestVoteResult requestVote(RequestVoteParam param);
 }

@@ -1,7 +1,9 @@
 package com.handshake.raft.raftServer;
 
+import com.handshake.raft.common.utils.SpringContextUtil;
 import com.handshake.raft.raftServer.proto.AppendEntriesParam;
-import com.handshake.raft.raftServer.rpc.Request;
+import com.handshake.raft.raftServer.rpc.RpcClient;
+import com.handshake.raft.raftServer.service.RaftConsensusService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +35,11 @@ public class HeartBeat implements Runnable{
                     .leaderCommit(node.getCommitIndex())
                     .build();
 
-            Request.builder()
-                    .cmd(Request.A_ENTRIES)
-                    .obj(param)
-                    .url(url)
-                    .build();
+            RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
+            RaftConsensusService service = rpcClient.getService(url);
+            if(service != null){
+
+            }
         }
 
 

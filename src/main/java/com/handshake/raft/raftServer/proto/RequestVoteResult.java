@@ -1,6 +1,5 @@
 package com.handshake.raft.raftServer.proto;
 
-import com.handshake.raft.rpc.Request;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -15,7 +14,7 @@ public class RequestVoteResult implements Serializable {
     int term;
     Boolean voteGranted;
 
-    RequestVoteResult(Long term,Boolean voteGranted){
+    RequestVoteResult(int term,Boolean voteGranted){
         this.term = term;
         this.voteGranted = voteGranted;
     }

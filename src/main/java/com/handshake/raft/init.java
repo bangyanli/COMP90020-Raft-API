@@ -1,6 +1,8 @@
 package com.handshake.raft;
 
 import com.handshake.raft.config.NodeConfig;
+import com.handshake.raft.raftServer.rpc.RpcClient;
+import com.handshake.raft.raftServer.rpc.RpcServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -17,10 +19,18 @@ public class init implements InitializingBean {
     @Autowired
     NodeConfig nodeConfig;
 
+    @Autowired
+    RpcServiceProvider rpcServiceProvider;
+
+    @Autowired
+    RpcClient rpcClient;
+
 
     @Override
     public void afterPropertiesSet() throws Exception {
         initLibrary();
+        rpcServiceProvider.init();
+        rpcClient.init();
         logger.info(nodeConfig.toString());
     }
 

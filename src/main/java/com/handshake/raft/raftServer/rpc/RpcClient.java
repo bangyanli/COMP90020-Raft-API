@@ -1,31 +1,68 @@
 package com.handshake.raft.raftServer.rpc;
-import com.alipay.remoting.exception.RemotingException;
-import lombok.extern.slf4j.Slf4j;
-import java.util.concurrent.TimeUnit;
 
-@Slf4j
-public class RpcClient {
-    private final static com.alipay.remoting.rpc.RpcClient CLIENT = new com.alipay.remoting.rpc.RpcClient();
-    public <R> R send(Request request) {
-        return send(request, (int) TimeUnit.SECONDS.toMillis(5));
-    }
-    public <R> R send(Request request, int timeout) {
-        Response<R> result;
+import com.alipay.sofa.rpc.config.ConsumerConfig;
+import com.handshake.raft.config.NodeConfig;
+import com.handshake.raft.raftServer.service.LifeCycle;
+import com.handshake.raft.raftServer.service.RaftConsensusService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
+@Service
+public class RpcClient implements LifeCycle {
+
+    private static final Logger logger = LoggerFactory.getLogger(RpcClient.class);
+
+    @Autowired
+    private NodeConfig nodeConfig;
+
+    private final ConcurrentHashMap<String,ConsumerConfig<RaftConsensusService>> serverHashMap = new ConcurrentHashMap<>();
+
+    /**
+     * return rpc service or null
+     * @param ip ip of remove server
+     * @return rpc service or null
+     */
+    public RaftConsensusService getService(String ip){
+        ConsumerConfig<RaftConsensusService> consumerConfig = serverHashMap.get(ip);
+        RaftConsensusService raftConsensusService = null;
         try {
-            result = (Response<R>) CLIENT.invokeSync(request.getUrl(), request, timeout);
-            return result.getResult();
-        } catch (RemotingException e) {
-            throw new RaftRemotingException("rpc RaftRemotingException ", e);
-        } catch (InterruptedException e) {
-            // ignore
+            raftConsensusService = consumerConfig.refer();
         }
-        return null;
+        catch (Exception e){
+            logger.info("Fail to connect to " + ip);
+        }
+        return raftConsensusService;
     }
+
+    @Override
     public void init() {
-        CLIENT.startup();
+        ArrayList<String> otherServer = nodeConfig.getOtherServers();
+        for (String ip: otherServer){
+            ConsumerConfig<RaftConsensusService> consumerConfig = new ConsumerConfig<RaftConsensusService>()
+                    .setInterfaceId(RaftConsensusService.class.getName())
+                    .setProtocol("bolt")
+                    .setDirectUrl("bolt://" + ip);
+            serverHashMap.put(ip,consumerConfig);
+        }
     }
-    public void destroy() {
-        CLIENT.shutdown();
-        log.info("destroy success");
+
+    @Override
+    public void stop() {
+        for(ConsumerConfig<RaftConsensusService> consumerConfig: serverHashMap.values()){
+            consumerConfig.unRefer();
+        }
     }
+
+    public static void startClient() {
+        ConsumerConfig<RaftConsensusService> consumerConfig = new ConsumerConfig<RaftConsensusService>()
+                .setInterfaceId(RaftConsensusService.class.getName()) // 指定接口
+                .setProtocol("bolt") // 指定协议
+                .setDirectUrl("bolt://127.0.0.1:12200"); // 指定直连地址
+    }
+
 }

@@ -1,9 +1,9 @@
 package com.handshake.raft.raftServer;
 
 import com.handshake.raft.config.NodeConfig;
-import com.handshake.raft.dto.LogEntry;
-import com.handshake.raft.dto.RequestVoteResult;
-import com.handshake.raft.log.LogSystem;
+import com.handshake.raft.raftServer.log.LogSystem;
+import com.handshake.raft.raftServer.proto.LogEntry;
+import com.handshake.raft.raftServer.proto.RequestVoteResult;
 
 import java.util.ArrayList;
 import java.util.concurrent.Future;

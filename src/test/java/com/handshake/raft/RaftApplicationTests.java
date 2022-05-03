@@ -31,10 +31,10 @@ class RaftApplicationTests {
     @Test
     void testLogDatabase() {
         CopyOnWriteArrayList<LogEntry> logEntries = new CopyOnWriteArrayList<>();
-        logEntries.add(new LogEntry(1L,1L,new CreateBookCommand("zzz","aaa","1","1")));
-        logEntries.add(new LogEntry(2L,1L,new CreateBookCommand("aaa","aaa","1","1")));
-        logEntries.add(new LogEntry(3L,1L,new CreateBookCommand("bbb","aaa","1","1")));
-        logEntries.add(new LogEntry(3L,1L,new UploadChapterCommand("zzz","aaa",createMultipartFile())));
+        logEntries.add(new LogEntry(1,1,new CreateBookCommand("zzz","aaa","1","1")));
+        logEntries.add(new LogEntry(2,1,new CreateBookCommand("aaa","aaa","1","1")));
+        logEntries.add(new LogEntry(3,1,new CreateBookCommand("bbb","aaa","1","1")));
+        logEntries.add(new LogEntry(3,1,new UploadChapterCommand("zzz","aaa",createMultipartFile())));
         logdb.saveToLocal(logEntries);
         CopyOnWriteArrayList<LogEntry> logEntries1 = logdb.readFromLocal();
         Command command = logEntries.get(logEntries.size() - 1).getCommand();
