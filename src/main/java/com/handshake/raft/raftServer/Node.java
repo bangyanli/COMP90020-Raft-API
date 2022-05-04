@@ -6,6 +6,9 @@ import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import com.handshake.raft.raftServer.log.LogSystem;
 import com.handshake.raft.raftServer.proto.Command;
 import com.handshake.raft.raftServer.proto.LogEntry;
+import com.handshake.raft.service.Impl.WebSocketServer;
+import org.springframework.web.socket.WebSocketSession;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -13,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.websocket.Session;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -23,7 +27,8 @@ import java.util.concurrent.*;
 public class Node implements LifeCycle{
 
     private static final Logger logger = LoggerFactory.getLogger(Node.class);
-
+    @Autowired
+    private WebSocketServer webSocketServer;
     @Autowired
     private NodeConfig nodeConfig;
     @Autowired
@@ -212,6 +217,7 @@ public class Node implements LifeCycle{
 
         //save to log system first
         log.write(logEntry);
+
 
         //restart heartbeat
         heartbeat.stop();

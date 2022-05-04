@@ -6,10 +6,13 @@ import com.handshake.raft.raftServer.log.LogDatabase;
 import com.handshake.raft.raftServer.log.LogInfo;
 import com.handshake.raft.raftServer.log.LogSystem;
 import com.handshake.raft.raftServer.proto.LogEntry;
+import com.handshake.raft.service.Impl.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +24,8 @@ public class LogSystemImpl implements LogSystem {
     private static Logger logger = LoggerFactory.getLogger(LogSystemImpl.class);
 
     public final static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
+    @Autowired
+    private WebSocketServer webSocketServer;
     private HashMap<Integer,LogEntry> logEntries = null;
 
     private volatile int commitIndex = 0;
@@ -190,6 +194,7 @@ public class LogSystemImpl implements LogSystem {
                 if(logEntry != null){
                     if(logEntry.getCommand() != null) {
                         logEntry.getCommand().execute();
+                        webSocketServer.sendMessage(logEntry.toString());
                     }
                     else {
                         logger.warn("When apply log, the command of log " + logEntry.getIndex() + " is null!");
