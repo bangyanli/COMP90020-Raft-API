@@ -7,7 +7,7 @@ import com.handshake.raft.raftServer.proto.RequestVoteResult;
 
 public interface RaftConsensusService {
 
-    AppendEntriesResult appendEntries(AppendEntriesParam param);
+    AppendEntriesResult appendEntries(AppendEntriesParam param) throws InterruptedException;
 
-    RequestVoteResult requestVote(RequestVoteParam param);
+    RequestVoteResult requestVote(RequestVoteParam param) throws InterruptedException;
 }

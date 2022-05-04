@@ -78,6 +78,7 @@ public class Election implements Runnable{
                                 voteGet.incrementAndGet();
                             }
                         } catch (Exception e) {
+                            //logger.info(e.getMessage(),e);
                             logger.warn("Fail to send request vote to " + peer);
                         }
                         finally {

@@ -167,7 +167,7 @@ public class Heartbeat implements Runnable,LifeCycle{
     /**
      * find nextIndex of a peer fast
      */
-    public void findNextIndex(String peer, RaftConsensusService service){
+    public void findNextIndex(String peer, RaftConsensusService service) throws InterruptedException{
         Node node = SpringContextUtil.getBean(Node.class);
         while (true){
             int nextIndex = node.getNextIndex().get(peer);

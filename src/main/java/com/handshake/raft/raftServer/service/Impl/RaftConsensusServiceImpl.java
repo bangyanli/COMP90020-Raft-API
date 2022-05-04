@@ -15,17 +15,19 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class RaftConsensusServiceImpl implements RaftConsensusService {
 
-    private static Logger logger = LoggerFactory.getLogger(LogSystemImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(LogSystemImpl.class);
     public static final ReentrantLock voteLock = new ReentrantLock();
     public static final ReentrantLock appendLock = new ReentrantLock();
 
-    private Node node = SpringContextUtil.getBean(Node.class);
-    private LogSystem logSystem = SpringContextUtil.getBean(LogSystem.class);
-    private ElectionTimer electionTimer = SpringContextUtil.getBean(ElectionTimer.class);
+    private final Node node = SpringContextUtil.getBean(Node.class);
+    private final LogSystem logSystem = SpringContextUtil.getBean(LogSystem.class);
+    private final ElectionTimer electionTimer = SpringContextUtil.getBean(ElectionTimer.class);
 
 
     @Override
-    public AppendEntriesResult appendEntries(AppendEntriesParam param) {
+    public AppendEntriesResult appendEntries(AppendEntriesParam param) throws InterruptedException{
+        //simulate latency
+        Thread.sleep(0);
         try {
             appendLock.lock();
             if (node.getNodeStatus() == Status.LEADER) {
@@ -105,7 +107,9 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
 
 
     @Override
-    public RequestVoteResult requestVote(RequestVoteParam param) {
+    public RequestVoteResult requestVote(RequestVoteParam param) throws InterruptedException{
+        //simulate latency
+        Thread.sleep(0);
         try{
             voteLock.lock();
             //step 1
