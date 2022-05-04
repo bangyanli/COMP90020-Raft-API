@@ -1,18 +1,27 @@
 server:
   port: 7000
 
+# common log level
+#logging:
+#  level:
+#    root: DEBUG
+
 raft:
   servers:
     - "localhost:5001"
     - "localhost:6001"
     - "localhost:7001"
+  serversSpringAddress:
+    - "localhost:5000"
+    - "localhost:6000"
+    - "localhost:7000"
   self: "localhost:7001"
   electionTimeout: 15000
   heartBeatFrequent: 5000
-  log: "log3.json"
+  log: "logs/log3.json"
 
 library:
-  address: "library3"
+  address: "libraries/library3"
 
 spring:
   mvc:

@@ -7,13 +7,13 @@ import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import com.handshake.raft.raftServer.log.LogSystem;
 import com.handshake.raft.raftServer.rpc.RpcClient;
 import com.handshake.raft.raftServer.rpc.RpcServiceProvider;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.io.File;
 
 @Component
@@ -53,6 +53,16 @@ public class init implements InitializingBean {
         rpcServiceProvider.init();
         rpcClient.init();
         node.init();
+    }
+
+    @PreDestroy
+    public void stop() {
+        logger.info("###STOPing###");
+        node.stop();
+        rpcClient.stop();
+        rpcServiceProvider.stop();
+        logSystem.stop();
+        logger.info("###STOP FROM THE LIFECYCLE###");
     }
 
     /**

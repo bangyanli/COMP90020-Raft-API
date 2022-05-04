@@ -6,6 +6,11 @@ target/
 
 ### DATABASE ###
 library
+libraries
+
+### LOG ###
+log.json
+logs
 
 ### STS ###
 .apt_generated

@@ -7,11 +7,15 @@ import com.handshake.raft.config.NodeConfig;
 import com.handshake.raft.raftServer.service.Impl.RaftConsensusServiceImpl;
 import com.handshake.raft.raftServer.LifeCycle;
 import com.handshake.raft.raftServer.service.RaftConsensusService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RpcServiceProvider implements LifeCycle {
+
+    private static final Logger logger = LoggerFactory.getLogger(RpcServiceProvider.class);
 
     @Autowired
     private NodeConfig nodeConfig;
@@ -33,8 +37,10 @@ public class RpcServiceProvider implements LifeCycle {
 
     @Override
     public void stop() {
+        logger.debug("Stopping {}", RpcServiceProvider.class);
         if(providerConfig != null){
             providerConfig.unExport();
         }
+        logger.debug("Stopped {}", RpcServiceProvider.class);
     }
 }

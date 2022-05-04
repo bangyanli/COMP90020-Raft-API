@@ -39,4 +39,10 @@ public interface LogSystem extends LifeCycle {
     public int getLastTerm();
 
     public void applyLog();
+
+    public void store();
+
+    public int getCurrentTerm();
+
+    public String getVotedFor();
 }

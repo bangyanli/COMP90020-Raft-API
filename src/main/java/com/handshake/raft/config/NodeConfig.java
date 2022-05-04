@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class NodeConfig {
 
     private ArrayList<String> servers;
+    private ArrayList<String> serversSpringAddress;
     private String self;
     private volatile long electionTimeout;
     private long heartBeatFrequent;
@@ -24,6 +25,15 @@ public class NodeConfig {
         ArrayList<String> otherServers = new ArrayList<>(servers);
         otherServers.remove(self);
         return otherServers;
+    }
+
+    public String getSpringAddress(String peer){
+        int index = servers.indexOf(peer);
+        //if not exist, return the first
+        if(index == -1){
+            return serversSpringAddress.get(0);
+        }
+        return serversSpringAddress.get(index);
     }
 
 }

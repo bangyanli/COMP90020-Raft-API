@@ -53,9 +53,11 @@ public class RpcClient implements LifeCycle {
 
     @Override
     public void stop() {
+        logger.debug("Stopping {}", RpcClient.class);
         for(ConsumerConfig<RaftConsensusService> consumerConfig: serverHashMap.values()){
             consumerConfig.unRefer();
         }
+        logger.debug("Stopped {}", RpcClient.class);
     }
 
 }

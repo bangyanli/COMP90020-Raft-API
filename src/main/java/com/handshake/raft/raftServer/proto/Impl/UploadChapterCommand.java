@@ -2,6 +2,7 @@ package com.handshake.raft.raftServer.proto.Impl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.handshake.raft.common.exceptions.BaseException;
 import com.handshake.raft.raftServer.proto.Command;
 import com.handshake.raft.service.BookService;
 import com.handshake.raft.service.Impl.BookServiceImpl;
@@ -47,15 +48,19 @@ public class UploadChapterCommand implements Command {
 
     @Override
     public void execute() {
-        bookService.uploadChapter(name,chapter,file);
+        try {
+            bookService.uploadChapter(name,chapter,file);
+        }
+        catch (BaseException e){
+
+        }
     }
 
     @Override
     public String toString() {
-        return "uploadChapterCommand{" +
+        return "UploadChapterCommand{" +
                 "name='" + name + '\'' +
                 ", chapter='" + chapter + '\'' +
-                ", file=" + file +
                 '}';
     }
 }

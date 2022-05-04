@@ -15,6 +15,7 @@ public class RaftThreadPool implements LifeCycle {
     private ScheduledFuture electionTimer = null;
     private ScheduledFuture heartbeatTask = null;
 
+
     @Override
     public void init() {
         executorService = new ThreadPoolExecutor(

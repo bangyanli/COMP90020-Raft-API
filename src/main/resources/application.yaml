@@ -1,6 +1,11 @@
 server:
   port: 5000
 
+# common log level
+logging:
+  level:
+    root: DEBUG
+
 raft:
   servers:
     - "localhost:5001"

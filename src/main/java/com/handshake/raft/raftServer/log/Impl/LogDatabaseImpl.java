@@ -22,8 +22,8 @@ public class LogDatabaseImpl implements LogDatabase {
     public void saveToLocal(LogInfo logInfo, ReentrantReadWriteLock lock){
         NodeConfig nodeConfig = SpringContextUtil.getBean(NodeConfig.class);
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
-        writeLock.lock();
         try {
+            writeLock.lock();
             Json.getInstance().writeValue(new File(nodeConfig.getLog()),logInfo);
         } catch (IOException e) {
             logger.warn(e.getMessage(),e);
@@ -36,9 +36,9 @@ public class LogDatabaseImpl implements LogDatabase {
     public LogInfo readFromLocal(ReentrantReadWriteLock lock){
         NodeConfig nodeConfig = SpringContextUtil.getBean(NodeConfig.class);
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
-        readLock.lock();
         LogInfo logInfo = new LogInfo();
         try {
+            readLock.lock();
             logInfo = Json.getInstance().readValue(new File(nodeConfig.getLog()),
                     new TypeReference<LogInfo>() {
             });

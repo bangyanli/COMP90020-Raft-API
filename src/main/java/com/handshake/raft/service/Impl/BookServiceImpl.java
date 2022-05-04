@@ -2,6 +2,7 @@ package com.handshake.raft.service.Impl;
 
 import com.handshake.raft.common.exceptions.*;
 import com.handshake.raft.common.utils.Json;
+import com.handshake.raft.common.utils.SpringContextUtil;
 import com.handshake.raft.config.LibraryConfig;
 import com.handshake.raft.dao.BookInfo;
 import com.handshake.raft.service.BookService;
@@ -49,6 +50,7 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public boolean createBook(String name, String author, String category, String description) {
+        LibraryConfig libraryConfig = SpringContextUtil.getBean(LibraryConfig.class);
         File file = new File(libraryConfig.getAddress() + "/" + name);
         if(file.exists()){
             throw new BookAlreadyExistException();
@@ -66,6 +68,7 @@ public class BookServiceImpl implements BookService {
         try {
             Json.getInstance().writeValue(bookInfoFile.getAbsoluteFile(), bookInfo);
         } catch (IOException e) {
+            bookInfoFile.delete();
             file.delete();
             e.printStackTrace();
             writeLock.unlock();
@@ -155,6 +158,7 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public boolean uploadChapter(String name, String chapter, MultipartFile file) {
+        LibraryConfig libraryConfig = SpringContextUtil.getBean(LibraryConfig.class);
         //sanity check
         if(!new File(libraryConfig.getAddress() + "/" + name).exists()){
             throw new BookNotExistException();
@@ -185,6 +189,7 @@ public class BookServiceImpl implements BookService {
      */
     @Override
     public boolean uploadChapter(String name, String chapter, String file) {
+        LibraryConfig libraryConfig = SpringContextUtil.getBean(LibraryConfig.class);
         //sanity check
         if(!new File(libraryConfig.getAddress() + "/" + name).exists()){
             throw new BookNotExistException();

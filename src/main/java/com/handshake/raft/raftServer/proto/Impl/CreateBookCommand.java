@@ -2,6 +2,7 @@ package com.handshake.raft.raftServer.proto.Impl;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.handshake.raft.common.exceptions.BaseException;
 import com.handshake.raft.raftServer.proto.Command;
 import com.handshake.raft.service.BookService;
 import com.handshake.raft.service.Impl.BookServiceImpl;
@@ -32,7 +33,12 @@ public class CreateBookCommand implements Command {
 
     @Override
     public void execute() {
-        bookService.createBook(name,author,category,description);
+        try{
+            bookService.createBook(name,author,category,description);
+        }
+        catch (BaseException e){
+
+        }
     }
 
     @Override
@@ -40,6 +46,8 @@ public class CreateBookCommand implements Command {
         return "CreateBookCommand{" +
                 "name='" + name + '\'' +
                 ", author='" + author + '\'' +
+                ", category='" + category + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

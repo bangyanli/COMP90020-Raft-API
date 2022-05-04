@@ -70,6 +70,7 @@ public class Election implements Runnable{
                             if (requestVoteResult.getTerm() > node.getCurrentTerm()) {
                                 logger.debug("Get requestVoteResult from bigger term!");
                                 node.setCurrentTerm(requestVoteResult.getTerm());
+                                node.setVotedFor(null);
                                 //convert to follower
                                 node.setNodeStatus(Status.FOLLOWER);
                             }

@@ -39,16 +39,11 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
             }
 
             if(param.getTerm() > node.getCurrentTerm()){
-                logger.info("Get appendEntries from bigger term!");
+                logger.debug("Get appendEntries from bigger term!");
                 node.setCurrentTerm(param.getTerm());
+                node.setVotedFor(null);
                 //convert to follower
                 node.setNodeStatus(Status.FOLLOWER);
-            }
-
-            //step 2
-            LogEntry logEntry = logSystem.read(param.getPrevLogIndex());
-            if (logEntry == null || logEntry.getTerm() != param.getPrevLogTerm()) {
-                return new AppendEntriesResult(node.getCurrentTerm(), false);
             }
 
             //set leader
@@ -56,20 +51,39 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
             //reset election timeout
             electionTimer.init();
 
+            //check whether is init(no log at all)
+            if(param.getPrevLogIndex() != 0){
+                //step 2
+                LogEntry logEntry = logSystem.read(param.getPrevLogIndex());
+                if (logEntry == null || logEntry.getTerm() != param.getPrevLogTerm()) {
+                    return new AppendEntriesResult(node.getCurrentTerm(), false);
+                }
+            }
+
+            logger.info("param {}", param.toString());
+
             //heartbeat
             if (param.getEntries() == null || param.getEntries().size() == 0) {
+                //step 5
+                if (param.getLeaderCommit() > logSystem.getCommitIndex()) {
+                    logSystem.setCommitIndex(Math.min(param.getLeaderCommit(),logSystem.getLastIndex()));
+                }
+                logSystem.applyLog();
                 return new AppendEntriesResult(node.getCurrentTerm(), true);
             }
 
             for (LogEntry leaderEntry : param.getEntries()) {
                 //step 3
-                logEntry = logSystem.read(leaderEntry.getIndex());
-                if (logEntry != null || logEntry.getTerm() != leaderEntry.getTerm()) {
+                LogEntry logEntry = logSystem.read(leaderEntry.getIndex());
+                if (logEntry != null && logEntry.getTerm() != leaderEntry.getTerm()) {
                     logger.info("Delete log with index " + logEntry.getIndex());
                     logSystem.removeFromIndex(leaderEntry.getIndex());
                 }
                 //step 4
-                logSystem.write(leaderEntry);
+                if(logEntry == null){
+                    logSystem.write(leaderEntry);
+                }
+
             }
 
             //step 5
@@ -83,6 +97,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
             return new AppendEntriesResult(node.getCurrentTerm(), true);
         }
         finally {
+            logSystem.store();
             appendLock.unlock();
         }
 
@@ -99,12 +114,14 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
             }
             if(param.getTerm() > node.getCurrentTerm()){
                 node.setCurrentTerm(param.getTerm());
+                node.setVotedFor(null);
                 //convert to follower
                 node.setNodeStatus(Status.FOLLOWER);
             }
             //step 2
             if(node.getVotedFor() == null || node.getVotedFor().equals(param.getCandidateId())){
                 if(param.getLastLogIndex() >= logSystem.getLastIndex() && param.getLastLogTerm() >= logSystem.getLastTerm()){
+                    node.setVotedFor(param.getCandidateId());
                     return new RequestVoteResult(node.getCurrentTerm(),true);
                 }
             }

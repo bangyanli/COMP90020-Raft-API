@@ -1,5 +1,7 @@
 package com.handshake.raft.raftServer.log.Impl;
 
+import com.handshake.raft.common.utils.SpringContextUtil;
+import com.handshake.raft.raftServer.Node;
 import com.handshake.raft.raftServer.log.LogDatabase;
 import com.handshake.raft.raftServer.log.LogInfo;
 import com.handshake.raft.raftServer.log.LogSystem;
@@ -25,6 +27,10 @@ public class LogSystemImpl implements LogSystem {
     private volatile int commitIndex = 0;
     private volatile int lastApplied = 0;
 
+    //use for store persistent state
+    private int currentTerm;
+    private String votedFor;
+
     @Autowired
     private LogDatabase logDatabase;
 
@@ -46,6 +52,8 @@ public class LogSystemImpl implements LogSystem {
     @Override
     public void init() {
         LogInfo logInfo = logDatabase.readFromLocal(lock);
+        currentTerm = logInfo.getCurrentTerm();
+        votedFor = logInfo.getVotedFor();
         logEntries = logInfo.getLogEntries();
         commitIndex = logInfo.getCommitIndex();
         lastApplied = logInfo.getLastApplied();
@@ -53,34 +61,45 @@ public class LogSystemImpl implements LogSystem {
 
     @Override
     public void stop() {
-        logDatabase.saveToLocal(new LogInfo(commitIndex,lastApplied,logEntries), lock);
+        logger.debug("Stopping {}", LogSystemImpl.class);
+        store();
+        logger.debug("Stopped {}", LogSystemImpl.class);
     }
 
     @Override
     public void write(LogEntry logEntry) {
 
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
-        writeLock.lock();
+        try{
+            writeLock.lock();
 
-        if(logEntries.get(logEntry.getIndex()) != null){
-            logger.warn("Write illegal index: " + logEntry.getIndex() + " when index already exist!");
+            if(logEntries.get(logEntry.getIndex()) != null){
+                logger.warn("Write illegal index: " + logEntry.getIndex() + " when index already exist!");
+            }
+            logEntries.put(logEntry.getIndex(),logEntry);
         }
-        logEntries.put(logEntry.getIndex(),logEntry);
-
-        writeLock.unlock();
-
+        finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public LogEntry read(int index) {
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
-        readLock.lock();
-
-        LogEntry logEntry = logEntries.get(index);
-        if(logEntry == null){
-            logger.warn("Read illegal index: " + index + " when index do not exist!");
+        LogEntry logEntry = null;
+        try{
+            readLock.lock();
+            if(index == 0){
+                return null;
+            }
+            logEntry = logEntries.get(index);
+            if(logEntry == null){
+                logger.debug("Read illegal index: " + index + " when index do not exist!");
+            }
         }
-        readLock.unlock();
+        finally {
+            readLock.unlock();
+        }
         return logEntry;
     }
 
@@ -88,46 +107,56 @@ public class LogSystemImpl implements LogSystem {
     public void removeFromIndex(int index) {
 
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
-        writeLock.lock();
-        for (int i = index;i<logEntries.size();i++){
-            LogEntry remove = logEntries.remove(i);
-            if(remove == null){
-                logger.warn("log entry with commit Index do not exist!");
+        try{
+            writeLock.lock();
+            for (int i = index;i<=logEntries.size();i++){
+                LogEntry remove = logEntries.remove(i);
+                if(remove == null){
+                    logger.warn("log entry with commit Index do not exist!");
+                }
             }
         }
-        writeLock.unlock();
-
+        finally {
+            writeLock.unlock();
+        }
     }
 
     @Override
     public ArrayList<LogEntry> getLogFromIndex(int index) {
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
-        readLock.lock();
-
         ArrayList<LogEntry> logEntryArrayList = new ArrayList<>();
-        for(int i=index;i<logEntries.size();i++){
-            LogEntry logEntry = logEntries.get(index);
-            if(logEntry == null){
-                logger.warn("Read illegal index: " + index + " when index do not exist! {}", "getLogFromIndex");
-            }
-            else {
-                logEntryArrayList.add(logEntry);
+        try{
+            readLock.lock();
+            for(int i=index;i<=logEntries.size();i++){
+                LogEntry logEntry = logEntries.get(i);
+                if(logEntry == null){
+                    logger.warn("Read illegal index: " + i + " when index do not exist! {}", "getLogFromIndex");
+                }
+                else {
+                    logEntryArrayList.add(logEntry);
+                }
             }
         }
-        readLock.unlock();
+        finally {
+            readLock.unlock();
+        }
         return logEntryArrayList;
     }
 
     @Override
     public LogEntry getLast() {
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
-        readLock.lock();
-
-        LogEntry logEntry = logEntries.get(logEntries.size());
-        if(logEntry == null){
-            logger.warn("log entry with commit Index do not exist!");
+        LogEntry logEntry = null;
+        try {
+            readLock.lock();
+            logEntry = logEntries.get(logEntries.size());
+            if(logEntry == null){
+                logger.warn("log entry with commit Index do not exist!");
+            }
         }
-        readLock.unlock();
+        finally {
+            readLock.unlock();
+        }
         return logEntry;
     }
 
@@ -153,24 +182,43 @@ public class LogSystemImpl implements LogSystem {
 
     @Override
     public void applyLog() {
-
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
-        readLock.lock();
-        for(int i = lastApplied+1; i <= commitIndex; i++){
-            LogEntry logEntry = logEntries.get(i);
-            if(logEntry != null){
-                if(logEntry.getCommand() != null) {
-                    logEntry.getCommand().execute();
+        try{
+            readLock.lock();
+            for(int i = lastApplied+1; i <= commitIndex; i++){
+                LogEntry logEntry = logEntries.get(i);
+                if(logEntry != null){
+                    if(logEntry.getCommand() != null) {
+                        logEntry.getCommand().execute();
+                    }
+                    else {
+                        logger.warn("When apply log, the command of log " + logEntry.getIndex() + " is null!");
+                    }
                 }
                 else {
-                    logger.warn("When apply log, the command of log " + logEntry.getIndex() + " is null!");
+                    logger.warn("When apply log, log " + logEntry.getIndex() + " is null!");
                 }
             }
-            else {
-                logger.warn("When apply log, log " + logEntry.getIndex() + " is null!");
-            }
+            lastApplied = commitIndex;
         }
-        readLock.unlock();
+        finally {
+            readLock.unlock();
+        }
+    }
 
+    @Override
+    public void store() {
+        Node node = SpringContextUtil.getBean(Node.class);
+        logDatabase.saveToLocal(new LogInfo(node.getCurrentTerm(),node.getVotedFor(),commitIndex,lastApplied,logEntries), lock);
+    }
+
+    @Override
+    public int getCurrentTerm() {
+        return currentTerm;
+    }
+
+    @Override
+    public String getVotedFor() {
+        return votedFor;
     }
 }
