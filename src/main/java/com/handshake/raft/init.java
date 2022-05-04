@@ -57,7 +57,7 @@ public class init implements InitializingBean {
 
     @PreDestroy
     public void stop() {
-        logger.info("###STOPing###");
+        logger.info("###STOPING###");
         node.stop();
         rpcClient.stop();
         rpcServiceProvider.stop();
