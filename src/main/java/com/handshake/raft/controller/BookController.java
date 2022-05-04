@@ -33,6 +33,7 @@ import java.io.File;
  * @author Lingxiao
  * @since 2022-04-25
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/library/book")
 public class BookController {
