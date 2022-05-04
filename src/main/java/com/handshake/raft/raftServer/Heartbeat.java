@@ -139,7 +139,7 @@ public class Heartbeat implements Runnable,LifeCycle{
                             }
 
                         } catch (Exception e) {
-                            logger.info(e.getMessage(),e);
+                            //logger.info(e.getMessage(),e);
                             logger.info("Fail to send heartbeat to " + url);
                         } finally {
                             //remove itself from RPCTaskMap
