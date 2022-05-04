@@ -11,6 +11,7 @@ import com.handshake.raft.raftServer.service.RaftConsensusService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class RaftConsensusServiceImpl implements RaftConsensusService {
@@ -18,16 +19,27 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
     private static final Logger logger = LoggerFactory.getLogger(LogSystemImpl.class);
     public static final ReentrantLock voteLock = new ReentrantLock();
     public static final ReentrantLock appendLock = new ReentrantLock();
+    //set latency
+    public static final ConcurrentHashMap<String,Integer> latencyMap = new ConcurrentHashMap<>();
 
     private final Node node = SpringContextUtil.getBean(Node.class);
     private final LogSystem logSystem = SpringContextUtil.getBean(LogSystem.class);
     private final ElectionTimer electionTimer = SpringContextUtil.getBean(ElectionTimer.class);
 
+    private void latency(String ip) throws InterruptedException{
+        //simulate latency
+        Integer latency = latencyMap.getOrDefault(ip, 0);
+        if(latency < 0){
+            //sleep very long
+            Thread.sleep(1000*1000);
+        }else {
+            Thread.sleep(latency);
+        }
+    }
 
     @Override
     public AppendEntriesResult appendEntries(AppendEntriesParam param) throws InterruptedException{
-        //simulate latency
-        Thread.sleep(0);
+        latency(param.getLeaderId());
         try {
             appendLock.lock();
             if (node.getNodeStatus() == Status.LEADER) {
@@ -108,8 +120,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
 
     @Override
     public RequestVoteResult requestVote(RequestVoteParam param) throws InterruptedException{
-        //simulate latency
-        Thread.sleep(0);
+        latency(param.getCandidateId());
         try{
             voteLock.lock();
             //step 1
