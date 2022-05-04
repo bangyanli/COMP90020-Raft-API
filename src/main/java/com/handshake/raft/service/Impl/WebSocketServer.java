@@ -19,13 +19,14 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Getter
 @Setter
 @Component
 public class WebSocketServer extends TextWebSocketHandler {
-    private HashMap<String,WebSocketSession> sessions = new HashMap<>();
+    private static ConcurrentHashMap<String,WebSocketSession> sessions = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
 
     @Override
@@ -38,11 +39,8 @@ public class WebSocketServer extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session){
         this.sessions.put(session.toString(),session);
         System.out.println(session.getId());
-        try {
-            session.sendMessage(new TextMessage("Hello world!"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sendMessage("Hello world");
+
 
     }
     @Override
@@ -56,11 +54,15 @@ public class WebSocketServer extends TextWebSocketHandler {
     }
 
     public void sendMessage(String msg){
-        if(sessions==null)
+        if(sessions==null) {
+            logger.warn("session is null");
             return;
+        }
         try {
             for(WebSocketSession session:sessions.values()){
+                logger.warn(session.toString()+"is null");
                 if(session!=null) {
+                    logger.warn(msg);
                     session.sendMessage(new TextMessage(msg));
                 }
             }

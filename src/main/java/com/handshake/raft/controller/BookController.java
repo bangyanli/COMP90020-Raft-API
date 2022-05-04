@@ -55,7 +55,6 @@ public class BookController {
         BookInfo bookInfo = bookService.getBookInfo(name);
         return ResponseResult.suc("Get info successfully!", bookInfo);
     }
-
     @PostMapping(value = "/{name}")
     public ResponseResult<Object> postBook(@PathVariable("name") String name,
                                            @RequestParam("author") String author,
