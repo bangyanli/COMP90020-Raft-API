@@ -22,8 +22,6 @@ public class LogSystemImpl implements LogSystem {
     private static Logger logger = LoggerFactory.getLogger(LogSystemImpl.class);
 
     public final static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    @Autowired
-    private WebSocketServer webSocketServer;
     private HashMap<Integer,LogEntry> logEntries = null;
 
     private volatile int commitIndex = 0;
@@ -187,12 +185,13 @@ public class LogSystemImpl implements LogSystem {
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
         try{
             readLock.lock();
+            WebSocketServer webSocketServer = SpringContextUtil.getBean(WebSocketServer.class);
             for(int i = lastApplied+1; i <= commitIndex; i++){
                 LogEntry logEntry = logEntries.get(i);
                 if(logEntry != null){
                     if(logEntry.getCommand() != null) {
+                        logger.info("Apply {}",logEntry.toString());
                         logEntry.getCommand().execute();
-                        webSocketServer.sendMessage(logEntry.toString());
                     }
                     else {
                         logger.warn("When apply log, the command of log " + logEntry.getIndex() + " is null!");
