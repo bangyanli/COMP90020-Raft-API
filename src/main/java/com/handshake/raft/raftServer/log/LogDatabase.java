@@ -1,7 +1,5 @@
 package com.handshake.raft.raftServer.log;
 
-import com.handshake.raft.raftServer.log.Impl.LogDatabaseImpl;
-
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public interface LogDatabase {

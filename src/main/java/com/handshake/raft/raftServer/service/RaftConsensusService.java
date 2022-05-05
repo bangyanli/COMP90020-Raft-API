@@ -2,8 +2,6 @@ package com.handshake.raft.raftServer.service;
 
 import com.handshake.raft.raftServer.proto.*;
 
-import java.util.ArrayList;
-
 public interface RaftConsensusService {
 
     AppendEntriesResult appendEntries(AppendEntriesParam param) throws InterruptedException;

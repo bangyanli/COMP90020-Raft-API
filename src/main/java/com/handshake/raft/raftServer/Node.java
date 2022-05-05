@@ -1,17 +1,16 @@
 package com.handshake.raft.raftServer;
 
-import com.handshake.raft.common.response.ResponseResult;
 import com.handshake.raft.common.utils.SpringContextUtil;
 import com.handshake.raft.config.NodeConfig;
 import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import com.handshake.raft.raftServer.log.LogSystem;
-import com.handshake.raft.raftServer.proto.*;
+import com.handshake.raft.raftServer.proto.Command;
+import com.handshake.raft.raftServer.proto.LogEntry;
+import com.handshake.raft.raftServer.proto.RemovePeerParam;
+import com.handshake.raft.raftServer.proto.RemovePeerResult;
 import com.handshake.raft.raftServer.rpc.RpcClient;
 import com.handshake.raft.raftServer.rpc.RpcServiceProvider;
 import com.handshake.raft.raftServer.service.RaftConsensusService;
-import com.handshake.raft.service.Impl.WebSocketServer;
-import org.springframework.web.socket.WebSocketSession;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;

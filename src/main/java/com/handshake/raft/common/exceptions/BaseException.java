@@ -2,8 +2,6 @@ package com.handshake.raft.common.exceptions;
 
 
 import com.handshake.raft.common.response.ResponseResult;
-import lombok.Data;
-import lombok.Getter;
 
 /**
  * <p>
