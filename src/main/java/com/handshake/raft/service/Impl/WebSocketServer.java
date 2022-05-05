@@ -28,8 +28,8 @@ public class WebSocketServer extends TextWebSocketHandler {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private static Map<String, Integer> lengthMap = new ConcurrentHashMap<>();
 
-    @Value("${logging.file}")
-    private String logFilePath;
+//    @Value("${logging.file}")
+//    private String logFilePath;
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message)

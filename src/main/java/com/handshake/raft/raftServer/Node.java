@@ -31,8 +31,6 @@ public class Node implements LifeCycle{
 
     private static final Logger logger = LoggerFactory.getLogger(Node.class);
     @Autowired
-    private WebSocketServer webSocketServer;
-    @Autowired
     private NodeConfig nodeConfig;
     @Autowired
     private LogSystem log;
