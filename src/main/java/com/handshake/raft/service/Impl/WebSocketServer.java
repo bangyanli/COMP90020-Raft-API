@@ -30,6 +30,7 @@ public class WebSocketServer extends TextWebSocketHandler {
     private static ConcurrentHashMap<String,WebSocketSession> sessions = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private static Map<String, Integer> lengthMap = new ConcurrentHashMap<>();
+    private static Map<String, Boolean> firstMap = new ConcurrentHashMap<>();
 
     @Value("${logging.file.name}")
     private String logFileName;
@@ -73,8 +74,6 @@ public class WebSocketServer extends TextWebSocketHandler {
         logger.info("logging sending task start!");
         RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
         raftThreadPool.getScheduledExecutorService().scheduleWithFixedDelay(() -> {
-            //read log
-            boolean first = true;
             while (!sessions.isEmpty()) {
                 //read log
                 BufferedReader reader = null;
@@ -114,10 +113,10 @@ public class WebSocketServer extends TextWebSocketHandler {
                         //store the last line
                         lengthMap.put(session.getId(), lines.length);
 
-                        //max range
-                        if(first && copyOfRange.length > 10){
-                            copyOfRange = Arrays.copyOfRange(copyOfRange, copyOfRange.length - 200, copyOfRange.length);
-                            first = false;
+                        //max range for the first time
+                        if(firstMap.getOrDefault(session.getId(),true) && copyOfRange.length > 10){
+                            copyOfRange = Arrays.copyOfRange(copyOfRange, copyOfRange.length - 10, copyOfRange.length);
+                            firstMap.put(session.getId(),false);
                         }
 
                         //send log message
