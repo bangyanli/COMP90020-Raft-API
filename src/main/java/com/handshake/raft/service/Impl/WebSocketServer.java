@@ -120,7 +120,9 @@ public class WebSocketServer extends TextWebSocketHandler {
                         }
 
                         //send log message
-                        send(session, String.join("",copyOfRange));
+                        if(copyOfRange.length > 0){
+                            send(session, String.join("\n",copyOfRange));
+                        }
 
                     } catch (Exception e) {
                         logger.info(e.getMessage(),e);
