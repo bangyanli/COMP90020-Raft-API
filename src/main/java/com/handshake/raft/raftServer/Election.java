@@ -110,6 +110,7 @@ public class Election implements Runnable{
             } else {
                 //start election
                 node.setVotedFor(null);
+                node.setNodeStatus(Status.FOLLOWER);
             }
         }catch (InterruptedException e){
             logger.debug("Election is Interrupted!");
