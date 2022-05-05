@@ -47,6 +47,12 @@ public class ElectionTimer implements Runnable,LifeCycle{
 
     @Override
     public void run() {
+        if(node.getNodeConfig().isNewServer()){
+            return;
+        }
+        if(node.getNodeConfig().isShuttingDown()){
+            return;
+        }
         try {
             Node node = SpringContextUtil.getBean(Node.class);
             logger.info("Change to candidate in Term {}", node.getCurrentTerm());
