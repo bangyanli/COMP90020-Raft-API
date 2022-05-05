@@ -74,7 +74,7 @@ public class WebSocketServer extends TextWebSocketHandler {
         logger.info("logging sending task start!");
         RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
         raftThreadPool.getScheduledExecutorService().scheduleWithFixedDelay(() -> {
-            while (!sessions.isEmpty()) {
+            if (!sessions.isEmpty()) {
                 //read log
                 BufferedReader reader = null;
                 String[] lines;
@@ -98,15 +98,15 @@ public class WebSocketServer extends TextWebSocketHandler {
                 for (WebSocketSession session:sessions.values()){
                     try {
                         //get log from last
-                        String[] copyOfRange = Arrays.copyOfRange(lines, lengthMap.get(session.getId()), lines.length);
-
+                        String[] copyOfRange = Arrays.copyOfRange(lines, lengthMap.getOrDefault(session.getId(),0), lines.length);
                         //prepossess the log
                         for (int i = 0; i < copyOfRange.length; i++) {
-                            String line = (String) copyOfRange[i];
+                            String line = copyOfRange[i];
                             //only get log information
                             String[] split = line.split(": ");
-                            line = split[1];
-
+                            if(split.length >= 2){
+                                line = split[1];
+                            }
                             copyOfRange[i] = line;
                         }
 
