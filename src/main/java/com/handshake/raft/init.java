@@ -7,6 +7,7 @@ import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import com.handshake.raft.raftServer.log.LogSystem;
 import com.handshake.raft.raftServer.rpc.RpcClient;
 import com.handshake.raft.raftServer.rpc.RpcServiceProvider;
+import com.handshake.raft.service.Impl.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -42,6 +43,9 @@ public class init implements InitializingBean {
     @Autowired
     Node node;
 
+    @Autowired
+    WebSocketServer webSocketServer;
+
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -53,6 +57,7 @@ public class init implements InitializingBean {
         rpcServiceProvider.init();
         rpcClient.init();
         node.init();
+        webSocketServer.startSendLog();
     }
 
     @PreDestroy

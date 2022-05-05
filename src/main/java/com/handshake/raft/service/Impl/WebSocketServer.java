@@ -1,4 +1,6 @@
 package com.handshake.raft.service.Impl;
+import com.handshake.raft.common.utils.SpringContextUtil;
+import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Getter
@@ -28,8 +31,8 @@ public class WebSocketServer extends TextWebSocketHandler {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private static Map<String, Integer> lengthMap = new ConcurrentHashMap<>();
 
-//    @Value("${logging.file}")
-//    private String logFilePath;
+    @Value("${logging.file.name}")
+    private String logFileName;
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message)
@@ -65,81 +68,68 @@ public class WebSocketServer extends TextWebSocketHandler {
         }
     }
 
-    public void sendLog(){
-        new Thread(() -> {
-            logger.info("LoggingWebSocketServer 任务开始");
+    //adopted from https://www.cnblogs.com/huanzi-qch/p/11041300.html
+    public void startSendLog(){
+        logger.info("logging sending task start!");
+        RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
+        raftThreadPool.getScheduledExecutorService().scheduleWithFixedDelay(() -> {
+            //read log
             boolean first = true;
             while (!sessions.isEmpty()) {
-                for (WebSocketSession session:sessions.values()){
-                    BufferedReader reader = null;
+                //read log
+                BufferedReader reader = null;
+                String[] lines;
+                try{
+                    File file = new File(logFileName);
+                    //IO steam
+                    reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+                    lines = reader.lines().toArray(String[]::new);
+                }catch (Exception e) {
+                    logger.info(e.getMessage(),e);
+                    logger.info("Fail to get log message!");
+                    return;
+                } finally {
                     try {
-                        //TODO 日志文件路径，获取最新的
-                        File file = new File("");
+                        if(reader != null){
+                            reader.close();
+                        }
+                    } catch (IOException ignored) {
+                    }
+                }
+                for (WebSocketSession session:sessions.values()){
+                    try {
+                        //get log from last
+                        String[] copyOfRange = Arrays.copyOfRange(lines, lengthMap.get(session.getId()), lines.length);
 
-                        //字符流
-                        reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
-                        Object[] lines = reader.lines().toArray();
-
-                        //只取从上次之后产生的日志
-                        Object[] copyOfRange = Arrays.copyOfRange(lines, lengthMap.get(session.getId()), lines.length);
-
-                        //对日志进行着色，更加美观  PS：注意，这里要根据日志生成规则来操作
+                        //prepossess the log
                         for (int i = 0; i < copyOfRange.length; i++) {
                             String line = (String) copyOfRange[i];
-                            //先转义
-                            line = line.replaceAll("&", "&amp;")
-                                    .replaceAll("<", "&lt;")
-                                    .replaceAll(">", "&gt;")
-                                    .replaceAll("\"", "&quot;");
-
-                            //处理等级
-                            line = line.replace("DEBUG", "<span style='color: blue;'>DEBUG</span>");
-                            line = line.replace("INFO", "<span style='color: green;'>INFO</span>");
-                            line = line.replace("WARN", "<span style='color: orange;'>WARN</span>");
-                            line = line.replace("ERROR", "<span style='color: red;'>ERROR</span>");
-
-                            //处理类名
-                            String[] split = line.split("]");
-                            if (split.length >= 2) {
-                                String[] split1 = split[1].split("-");
-                                if (split1.length >= 2) {
-                                    line = split[0] + "]" + "<span style='color: #298a8a;'>" + split1[0] + "</span>" + "-" + split1[1];
-                                }
-                            }
+                            //only get log information
+                            String[] split = line.split(": ");
+                            line = split[1];
 
                             copyOfRange[i] = line;
                         }
 
-                        //存储最新一行开始
+                        //store the last line
                         lengthMap.put(session.getId(), lines.length);
 
-                        //第一次如果太大，截取最新的200行就够了，避免传输的数据太大
-                        if(first && copyOfRange.length > 200){
+                        //max range
+                        if(first && copyOfRange.length > 10){
                             copyOfRange = Arrays.copyOfRange(copyOfRange, copyOfRange.length - 200, copyOfRange.length);
                             first = false;
                         }
 
-                        //String result = StringUtils.join(copyOfRange, "<br/>");
+                        //send log message
+                        send(session, String.join("",copyOfRange));
 
-                        //发送
-                        //send(session, result);
-
-                        //休眠一秒
-                        Thread.sleep(1000);
                     } catch (Exception e) {
-                        //捕获但不处理
-                        e.printStackTrace();
-                    } finally {
-                        try {
-                            reader.close();
-                        } catch (IOException ignored) {
-                        }
+                        logger.info(e.getMessage(),e);
+                        logger.info("Fail to send log message!");
                     }
                 }
-
             }
-            logger.info("LoggingWebSocketServer 任务结束");
-        }).start();
+        },1000,1000, TimeUnit.MILLISECONDS);
     }
 
     private void send(WebSocketSession session, String message) {
