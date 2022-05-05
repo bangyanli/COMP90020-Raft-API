@@ -45,8 +45,8 @@ public class init implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        logger.info(nodeConfig.toString());
-        logger.info(libraryConfig.toString());
+        //logger.info(nodeConfig.toString());
+        //logger.info(libraryConfig.toString());
         initLibrary();
         logSystem.init();
         raftThreadPool.init();

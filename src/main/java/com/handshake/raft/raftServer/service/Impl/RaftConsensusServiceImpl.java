@@ -7,10 +7,12 @@ import com.handshake.raft.raftServer.Status;
 import com.handshake.raft.raftServer.log.Impl.LogSystemImpl;
 import com.handshake.raft.raftServer.log.LogSystem;
 import com.handshake.raft.raftServer.proto.*;
+import com.handshake.raft.raftServer.proto.Impl.ChangeConfigurationCommand;
 import com.handshake.raft.raftServer.service.RaftConsensusService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -19,6 +21,8 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
     private static final Logger logger = LoggerFactory.getLogger(LogSystemImpl.class);
     public static final ReentrantLock voteLock = new ReentrantLock();
     public static final ReentrantLock appendLock = new ReentrantLock();
+    public static final ReentrantLock addPeerLock = new ReentrantLock();
+    public static final ReentrantLock removePeerLock = new ReentrantLock();
     //set latency
     public static final ConcurrentHashMap<String,Integer> latencyMap = new ConcurrentHashMap<>();
 
@@ -95,6 +99,25 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 }
                 //step 4
                 if(logEntry == null){
+                    //execute change configuration command immediately
+                    if(leaderEntry.getCommand() != null && leaderEntry.getCommand() instanceof ChangeConfigurationCommand){
+                        //create new command because execute will change status of command
+                        ChangeConfigurationCommand clientCommand = (ChangeConfigurationCommand)leaderEntry.getCommand();
+                        ChangeConfigurationCommand newCommand = ChangeConfigurationCommand.builder()
+                                .servers(clientCommand.getServers())
+                                .serversSpringAddress(clientCommand.getServersSpringAddress())
+                                .executed(false)
+                                .build();
+                        newCommand.execute();
+
+                        //copy the log entry because execute command will change status of command
+                        LogEntry newLogEntry = LogEntry.builder()
+                                .index(leaderEntry.getIndex())
+                                .term(leaderEntry.getTerm())
+                                .command(newCommand)
+                                .build();
+                        leaderEntry = newLogEntry;
+                    }
                     logSystem.write(leaderEntry);
                 }
 
@@ -147,4 +170,118 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
         }
     }
 
+    @Override
+    public AddPeerResult addPeer(AddPeerParam addPeerParam) throws InterruptedException {
+        latency(addPeerParam.getPeerIp());
+        try {
+            addPeerLock.lock();
+
+            //Not leader
+            if(node.getNodeStatus() != Status.LEADER){
+                return new AddPeerResult(false,null,node.getLeaderId());
+            }
+
+            //check whether peer is added before
+            if(node.getNodeConfig().getServers().contains(addPeerParam.getPeerIp())){
+                ServerInfo oldConfiguration = node.getNodeConfig().getOldConfiguration();
+                //server already in cluster
+                if(oldConfiguration == null
+                        || !oldConfiguration.getServers().contains(addPeerParam.getPeerIp())){
+                    return new AddPeerResult(true,null,node.getLeaderId());
+                }
+                else {
+                    return new AddPeerResult(false,null,node.getLeaderId());
+                }
+            }
+
+            //new configuration
+            ArrayList<String> newServers = new ArrayList<>(node.getNodeConfig().getServers());
+            newServers.add(addPeerParam.getPeerIp());
+            ArrayList<String> newServersSpringAddress = new ArrayList<>(node.getNodeConfig().getServersSpringAddress());
+            newServersSpringAddress.add(addPeerParam.getPeerSpringAddress());
+
+            //create command
+            ChangeConfigurationCommand changeConfigurationCommand = ChangeConfigurationCommand.builder()
+                    .servers(newServers)
+                    .serversSpringAddress(newServersSpringAddress)
+                    .executed(false)
+                    .build();
+
+            //use new configuration when it comes
+            changeConfigurationCommand.execute();
+
+            //create log entry
+            LogEntry logEntry = LogEntry.builder()
+                    .index(node.getLog().getLastIndex() + 1)
+                    .term(node.getCurrentTerm())
+                    .command(changeConfigurationCommand)
+                    .build();
+
+            //save to log system first
+            node.getLog().write(logEntry);
+            //use heartbeat to update new configuration, not here
+            return new AddPeerResult(false,null,node.getLeaderId());
+        }
+        finally {
+            addPeerLock.unlock();
+        }
+
+    }
+
+    @Override
+    public RemovePeerResult removePeer(RemovePeerParam removePeerParam) throws InterruptedException {
+        latency(removePeerParam.getPeerIp());
+        try {
+            removePeerLock.lock();
+
+            //Not leader
+            if(node.getNodeStatus() != Status.LEADER){
+                return new RemovePeerResult(false,null,node.getLeaderId());
+            }
+
+            //check whether peer is removed before
+            if(!node.getNodeConfig().getServers().contains(removePeerParam.getPeerIp())){
+                ServerInfo oldConfiguration = node.getNodeConfig().getOldConfiguration();
+                //server already removed
+                if(oldConfiguration == null
+                        || oldConfiguration.getServers().contains(removePeerParam.getPeerIp())){
+                    return new RemovePeerResult(true,null,node.getLeaderId());
+                }
+                else {
+                    return new RemovePeerResult(false,null,node.getLeaderId());
+                }
+            }
+
+            //new configuration
+            ArrayList<String> newServers = new ArrayList<>(node.getNodeConfig().getServers());
+            newServers.remove(removePeerParam.getPeerIp());
+            ArrayList<String> newServersSpringAddress = new ArrayList<>(node.getNodeConfig().getServersSpringAddress());
+            newServersSpringAddress.remove(removePeerParam.getPeerSpringAddress());
+
+            //create command
+            ChangeConfigurationCommand changeConfigurationCommand = ChangeConfigurationCommand.builder()
+                    .servers(newServers)
+                    .serversSpringAddress(newServersSpringAddress)
+                    .executed(false)
+                    .build();
+
+            //use new configuration when it comes
+            changeConfigurationCommand.execute();
+
+            //create log entry
+            LogEntry logEntry = LogEntry.builder()
+                    .index(node.getLog().getLastIndex() + 1)
+                    .term(node.getCurrentTerm())
+                    .command(changeConfigurationCommand)
+                    .build();
+
+            //save to log system first
+            node.getLog().write(logEntry);
+            //use heartbeat to update new configuration, not here
+            return new RemovePeerResult(false,null,node.getLeaderId());
+        }
+        finally {
+            removePeerLock.unlock();
+        }
+    }
 }

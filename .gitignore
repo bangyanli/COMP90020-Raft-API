@@ -11,6 +11,7 @@ libraries/*
 ### LOG ###
 log.json
 logs/*
+*.log
 
 ### STS ###
 .apt_generated

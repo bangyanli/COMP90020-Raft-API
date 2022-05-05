@@ -42,15 +42,29 @@ public class RpcClient implements LifeCycle {
     @Override
     public void init() {
         ArrayList<String> otherServer = nodeConfig.getOtherServers();
-        for (String ip: otherServer){
+        for (String address: otherServer){
             ConsumerConfig<RaftConsensusService> consumerConfig = new ConsumerConfig<RaftConsensusService>()
                     .setInterfaceId(RaftConsensusService.class.getName())
                     .setProtocol("bolt")
-                    .setDirectUrl("bolt://" + ip)
+                    .setDirectUrl("bolt://" + address)
                     .setTimeout(60)
                     .setConnectTimeout(30);
-            serverHashMap.put(ip,consumerConfig);
+            serverHashMap.put(address,consumerConfig);
         }
+    }
+
+    public void addServerConfig(String address) {
+        ConsumerConfig<RaftConsensusService> consumerConfig = new ConsumerConfig<RaftConsensusService>()
+                .setInterfaceId(RaftConsensusService.class.getName())
+                .setProtocol("bolt")
+                .setDirectUrl("bolt://" + address)
+                .setTimeout(60)
+                .setConnectTimeout(30);
+        serverHashMap.put(address,consumerConfig);
+    }
+
+    public void remove(String address) {
+        serverHashMap.remove(address);
     }
 
     @Override

@@ -31,6 +31,10 @@ public class Election implements Runnable{
 
     @Override
     public void run() {
+        if(node.getNodeConfig().isNewServer()){
+            node.addItself();
+            return;
+        }
         //use to interrupt task
         ConcurrentHashMap<String, Future<?>> RPCTaskMap = new ConcurrentHashMap<>();
         try {

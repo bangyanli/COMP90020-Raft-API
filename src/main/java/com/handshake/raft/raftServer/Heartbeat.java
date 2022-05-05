@@ -154,7 +154,7 @@ public class Heartbeat implements Runnable,LifeCycle{
             node.setNForMatchIndex();
             //apply log
             node.getLog().applyLog();
-            logger.info("Node {} finished heartbeat", node.getNodeConfig().getSelf());
+            //logger.info("Node {} finished heartbeat", node.getNodeConfig().getSelf());
         }
         catch (Exception e){
             logger.debug("Heartbeat is Interrupted!");

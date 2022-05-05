@@ -4,8 +4,9 @@ import com.handshake.raft.common.utils.SpringContextUtil;
 import com.handshake.raft.config.NodeConfig;
 import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import com.handshake.raft.raftServer.log.LogSystem;
-import com.handshake.raft.raftServer.proto.Command;
-import com.handshake.raft.raftServer.proto.LogEntry;
+import com.handshake.raft.raftServer.proto.*;
+import com.handshake.raft.raftServer.rpc.RpcClient;
+import com.handshake.raft.raftServer.service.RaftConsensusService;
 import com.handshake.raft.service.Impl.WebSocketServer;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.websocket.Session;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -164,6 +165,8 @@ public class Node implements LifeCycle{
         }
     }
 
+
+
     /**
      * leader action only
      *
@@ -240,5 +243,119 @@ public class Node implements LifeCycle{
         logger.info("log.getCommitIndex() == logEntry.getIndex() {}", log.getCommitIndex() == logEntry.getIndex());
         return log.getCommitIndex() == logEntry.getIndex();
     }
+
+    /**
+     * try to add itself to cluster
+     */
+    public void addItself(){
+        logger.info("Try to add itself {}", nodeConfig.getSelf());
+        RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
+        //param
+        AddPeerParam addPeerParam = AddPeerParam.builder()
+                .peerIp(nodeConfig.getSelf())
+                .peerSpringAddress(nodeConfig.getSpringAddress(nodeConfig.getSelf()))
+                .build();
+        //try to connect to any server to get leader
+        ArrayList<String> servers = nodeConfig.getOtherServers();
+        String leaderId = null;
+        for (String server: servers){
+            RaftConsensusService raftConsensusService = rpcClient.connectToService(server);
+            if(raftConsensusService != null){
+                try {
+                    AddPeerResult addPeerResult = raftConsensusService.addPeer(addPeerParam);
+                    //already in the cluster
+                    if(addPeerResult.isSuccess()){
+                        nodeConfig.setNewServer(false);
+                    }
+                    leaderId = addPeerResult.getLeaderId();
+                    if(leaderId != null){
+                        //already sent the request
+                        if(leaderId.equals(server)){
+                            return;
+                        }
+                        //send the request to leader
+                        else {
+                            break;
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    logger.info("Fail to connect to {}", server);
+                }
+            }
+        }
+        //send the request to leader
+        if(leaderId == null){
+            return;
+        }
+        RaftConsensusService raftConsensusService = rpcClient.connectToService(leaderId);
+        if(raftConsensusService != null){
+            try {
+                AddPeerResult addPeerResult = raftConsensusService.addPeer(addPeerParam);
+                //already in the cluster
+                if(addPeerResult.isSuccess()){
+                    nodeConfig.setNewServer(false);
+                }
+            }
+            catch (Exception e) {
+                logger.info("Fail to connect to {}", leaderId);
+            }
+        }
+    }
+
+    /**
+     * try to remove itself from cluster
+     */
+    public void removeItself(){
+        logger.info("Try to remove itself {}", nodeConfig.getSelf());
+        RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
+        //param
+        RemovePeerParam removePeerParam = RemovePeerParam.builder()
+                .peerIp(nodeConfig.getSelf())
+                .peerSpringAddress(nodeConfig.getSpringAddress(nodeConfig.getSelf()))
+                .build();
+        //try to connect to any server to get leader
+        ArrayList<String> servers = nodeConfig.getOtherServers();
+        String leaderId = null;
+        for (String server: servers){
+            RaftConsensusService raftConsensusService = rpcClient.connectToService(server);
+            if(raftConsensusService != null){
+                try {
+                    logger.info("removePeerParam {}", removePeerParam);
+                    RemovePeerResult removePeerResult = raftConsensusService.removePeer(removePeerParam);
+                    leaderId = removePeerResult.getLeaderId();
+                    if(leaderId != null){
+                        //already sent the request
+                        if(leaderId.equals(server)){
+                            return;
+                        }
+                        //send the request to leader
+                        else {
+                            break;
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    //logger.info(e.getMessage(),e);
+                    logger.info("Fail to connect to {}", server);
+                }
+            }
+        }
+        //send the request to leader
+        if(leaderId == null){
+            return;
+        }
+        RaftConsensusService raftConsensusService = rpcClient.connectToService(leaderId);
+        if(raftConsensusService != null){
+            try {
+                RemovePeerResult removePeerResult = raftConsensusService.removePeer(removePeerParam);
+            }
+            catch (Exception e) {
+                //logger.info(e.getMessage(),e);
+                logger.info("Fail to connect to {}", leaderId);
+            }
+        }
+    }
+
 
 }

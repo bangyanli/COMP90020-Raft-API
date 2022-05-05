@@ -1,31 +1,33 @@
 server:
-  port: 7000
+  port: 10000
 
 # common log level
 logging:
   level:
     root: INFO
   file:
-    name: "log3.log"
+    name: "log4.log"
 
 raft:
   servers:
     - "localhost:5001"
     - "localhost:6001"
     - "localhost:7001"
+    - "localhost:10001"
   serversSpringAddress:
     - "localhost:5000"
     - "localhost:6000"
     - "localhost:7000"
-  self: "localhost:7001"
+    - "localhost:10000"
+  self: "localhost:10001"
   electionTimeout: 15000
   heartBeatFrequent: 5000
-  log: "logs/log3.json"
-  newServer: false
-  hasBeenNewServer: false
+  log: "logs/log4.json"
+  newServer: true
+  hasBeenNewServer: true
 
 library:
-  address: "libraries/library3"
+  address: "libraries/library4"
 
 spring:
   mvc:

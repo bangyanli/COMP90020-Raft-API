@@ -2,9 +2,12 @@ server:
   port: 5000
 
 # common log level
-#logging:
-#  level:
-#    root: DEBUG
+logging:
+  level:
+    root: INFO
+  file:
+    name: "log1.log"
+
 
 raft:
   servers:
@@ -19,6 +22,8 @@ raft:
   electionTimeout: 7000
   heartBeatFrequent: 5000
   log: "logs/log1.json"
+  newServer: false
+  hasBeenNewServer: false
 
 library:
   address: "libraries/library1"
