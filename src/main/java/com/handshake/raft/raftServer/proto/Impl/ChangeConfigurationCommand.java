@@ -42,9 +42,8 @@ public class ChangeConfigurationCommand implements Command {
             //update server config for rpc
             RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
             Node node = SpringContextUtil.getBean(Node.class);
-            ArrayList<String> difference = new ArrayList<>();
             if(servers.size() > nodeConfig.getServers().size()){
-                difference.addAll(servers);
+                ArrayList<String> difference = new ArrayList<>(servers);
                 difference.removeAll(nodeConfig.getServers());
                 for (String address: difference){
                     rpcClient.addServerConfig(address);

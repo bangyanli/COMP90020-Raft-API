@@ -3,6 +3,8 @@ package com.handshake.raft.config;
 import com.handshake.raft.raftServer.proto.ServerInfo;
 import lombok.Data;
 import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +16,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Configuration
 @ConfigurationProperties(prefix = "raft")
 public class NodeConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(NodeConfig.class);
 
     private static final ReentrantReadWriteLock configurationLock = new ReentrantReadWriteLock();
 
@@ -64,7 +68,7 @@ public class NodeConfig {
         ReentrantReadWriteLock.WriteLock writeLock = configurationLock.writeLock();
         try {
             writeLock.lock();
-            this.serversSpringAddress = servers;
+            this.serversSpringAddress = serversSpringAddress;
         }finally {
             writeLock.unlock();
         }
@@ -101,6 +105,7 @@ public class NodeConfig {
         int index = servers.indexOf(peer);
         //if not exist, return the first
         if(index == -1){
+            logger.warn("getSpringAddress address {} not exist!",peer);
             return serversSpringAddress.get(0);
         }
         return serversSpringAddress.get(index);
