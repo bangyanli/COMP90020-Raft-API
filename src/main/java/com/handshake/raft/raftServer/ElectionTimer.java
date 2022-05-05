@@ -16,15 +16,12 @@ public class ElectionTimer implements Runnable,LifeCycle{
 
     private static final Logger logger = LoggerFactory.getLogger(ElectionTimer.class);
 
-    @Autowired
-    private RaftThreadPool raftThreadPool;
+    private final RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
 
-    @Autowired
-    private Node node;
+    private final Node node = SpringContextUtil.getBean(Node.class);
 
     @Override
     public void init() {
-        logger.debug("Reset election timer!");
         ScheduledFuture electionTimer = raftThreadPool.getElectionTimer();
         if (electionTimer != null && !electionTimer.isDone()) {
             electionTimer.cancel(true);
