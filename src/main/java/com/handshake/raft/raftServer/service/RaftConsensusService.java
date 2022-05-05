@@ -13,4 +13,6 @@ public interface RaftConsensusService {
     AddPeerResult addPeer(AddPeerParam addPeerParam) throws InterruptedException;
 
     RemovePeerResult removePeer(RemovePeerParam removePeerParam) throws InterruptedException;
+
+    GetClusterInfoResult getClusterInfo(GetClusterInfoParam getClusterInfoParam) throws InterruptedException;
 }

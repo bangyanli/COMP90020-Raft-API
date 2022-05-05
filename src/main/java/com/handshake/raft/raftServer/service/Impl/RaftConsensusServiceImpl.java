@@ -189,6 +189,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                         || !oldConfiguration.getServers().contains(addPeerParam.getPeerIp())){
                     return new AddPeerResult(true,null,node.getLeaderId());
                 }
+                //server configuration not committed
                 else {
                     return new AddPeerResult(false,null,node.getLeaderId());
                 }
@@ -292,6 +293,20 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
         }
         finally {
             removePeerLock.unlock();
+        }
+    }
+
+    @Override
+    public GetClusterInfoResult getClusterInfo(GetClusterInfoParam getClusterInfoParam) throws InterruptedException {
+        latency(getClusterInfoParam.getPeerAddress());
+        //Not leader
+        if(node.getNodeStatus() != Status.LEADER){
+            return new GetClusterInfoResult(false,null,node.getLeaderId());
+        }
+        else {
+            return new GetClusterInfoResult(true,
+                    new ServerInfo(node.getNodeConfig().getServers(),node.getNodeConfig().getServersSpringAddress()),
+                    node.getLeaderId());
         }
     }
 }

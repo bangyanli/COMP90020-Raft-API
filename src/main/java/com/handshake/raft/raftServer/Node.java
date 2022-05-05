@@ -265,20 +265,9 @@ public class Node implements LifeCycle{
             if(raftConsensusService != null){
                 try {
                     AddPeerResult addPeerResult = raftConsensusService.addPeer(addPeerParam);
-                    //already in the cluster
-                    if(addPeerResult.isSuccess()){
-                        nodeConfig.setNewServer(false);
-                    }
                     leaderId = addPeerResult.getLeaderId();
                     if(leaderId != null){
-                        //already sent the request
-                        if(leaderId.equals(server)){
-                            return;
-                        }
-                        //send the request to leader
-                        else {
-                            break;
-                        }
+                        break;
                     }
                 }
                 catch (Exception e) {
@@ -294,9 +283,13 @@ public class Node implements LifeCycle{
         if(raftConsensusService != null){
             try {
                 AddPeerResult addPeerResult = raftConsensusService.addPeer(addPeerParam);
-                //already in the cluster
+                //already in the cluster, try to get the newest cluster
                 if(addPeerResult.isSuccess()){
-                    nodeConfig.setNewServer(false);
+                    GetClusterInfoResult clusterInfo = raftConsensusService.getClusterInfo(new GetClusterInfoParam(nodeConfig.getSelf()));
+                    if(clusterInfo.isSuccess()){
+                        nodeConfig.setServerInfo(clusterInfo.getServerInfo());
+                        nodeConfig.setNewServer(false);
+                    }
                 }
             }
             catch (Exception e) {
