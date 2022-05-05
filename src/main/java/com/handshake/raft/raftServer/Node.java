@@ -252,59 +252,6 @@ public class Node implements LifeCycle{
     }
 
     /**
-     * try to add itself to cluster
-     */
-    public void addItself(){
-        RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
-        NodeConfig nodeConfig = SpringContextUtil.getBean(NodeConfig.class);
-        logger.info("Try to add itself {}", nodeConfig.getSelf());
-        //param
-        AddPeerParam addPeerParam = AddPeerParam.builder()
-                .peerIp(nodeConfig.getSelf())
-                .peerSpringAddress(nodeConfig.getSpringAddress(nodeConfig.getSelf()))
-                .build();
-        //try to connect to any server to get leader
-        ArrayList<String> servers = nodeConfig.getOtherServers();
-        String leaderId = null;
-        for (String server: servers){
-            RaftConsensusService raftConsensusService = rpcClient.connectToService(server);
-            if(raftConsensusService != null){
-                try {
-                    AddPeerResult addPeerResult = raftConsensusService.addPeer(addPeerParam);
-                    leaderId = addPeerResult.getLeaderId();
-                    if(leaderId != null){
-                        break;
-                    }
-                }
-                catch (Exception e) {
-                    logger.info("Fail to connect to {}", server);
-                }
-            }
-        }
-        //send the request to leader
-        if(leaderId == null){
-            return;
-        }
-        RaftConsensusService raftConsensusService = rpcClient.connectToService(leaderId);
-        if(raftConsensusService != null){
-            try {
-                AddPeerResult addPeerResult = raftConsensusService.addPeer(addPeerParam);
-                //already in the cluster, try to get the newest cluster
-                if(addPeerResult.isSuccess()){
-                    GetClusterInfoResult clusterInfo = raftConsensusService.getClusterInfo(new GetClusterInfoParam(nodeConfig.getSelf()));
-                    if(clusterInfo.isSuccess()){
-                        nodeConfig.setServerInfo(clusterInfo.getServerInfo());
-                        nodeConfig.setNewServer(false);
-                    }
-                }
-            }
-            catch (Exception e) {
-                logger.info("Fail to connect to {}", leaderId);
-            }
-        }
-    }
-
-    /**
      * try to remove itself from cluster
      */
     public boolean removeItself(){
