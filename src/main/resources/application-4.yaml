@@ -11,12 +11,12 @@ logging:
 raft:
   servers:
     - "localhost:5001"
-    - "localhost:6001"
+    - "localhost:9001"
     - "localhost:7001"
     - "localhost:10001"
   serversSpringAddress:
     - "localhost:5000"
-    - "localhost:6000"
+    - "localhost:9000"
     - "localhost:7000"
     - "localhost:10000"
   self: "localhost:10001"
