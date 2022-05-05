@@ -47,7 +47,7 @@ public class RaftController {
     }
 
     /**
-     * try to remove itself from cluster
+     * start election
      * @return
      */
     @PostMapping("/election")
