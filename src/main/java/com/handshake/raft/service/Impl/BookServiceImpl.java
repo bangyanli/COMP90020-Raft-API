@@ -98,7 +98,7 @@ public class BookServiceImpl implements BookService {
             throw new BookInfoFailReadException();
         }
         readLock.unlock();
-        logger.info("successfully get book info: " + bookInfo);
+        logger.debug("successfully get book info: " + bookInfo);
         return bookInfo;
     }
 
@@ -112,7 +112,7 @@ public class BookServiceImpl implements BookService {
         if(!file.exists()){
             throw new BookNotExistException();
         }
-        logger.info("successfully get index of " + name);
+        logger.debug("successfully get index of " + name);
         return file.list();
     }
 
@@ -142,7 +142,7 @@ public class BookServiceImpl implements BookService {
             throw new ChapterFailReadException();
         }
         readLock.unlock();
-        logger.info("successfully download chapter " + chapter + " of " + name);
+        logger.debug("successfully download chapter " + chapter + " of " + name);
         return str;
     }
 

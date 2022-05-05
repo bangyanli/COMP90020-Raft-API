@@ -34,7 +34,7 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     public String[] getLibraryCatalog() {
         File file = new File(libraryConfig.getAddress());
-        logger.info("Get Library Catalog");
+        logger.debug("Get Library Catalog");
         return file.list();
 
     }
