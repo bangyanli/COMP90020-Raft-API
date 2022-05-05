@@ -34,6 +34,7 @@ public class RpcClient implements LifeCycle {
             raftConsensusService = consumerConfig.refer();
         }
         catch (Exception e){
+            logger.info(e.getMessage(),e);
             logger.info("Fail to connect to " + ip);
         }
         return raftConsensusService;
@@ -54,6 +55,9 @@ public class RpcClient implements LifeCycle {
     }
 
     public void addServerConfig(String address) {
+        if(serverHashMap.get(address)!=null){
+            return;
+        }
         ConsumerConfig<RaftConsensusService> consumerConfig = new ConsumerConfig<RaftConsensusService>()
                 .setInterfaceId(RaftConsensusService.class.getName())
                 .setProtocol("bolt")

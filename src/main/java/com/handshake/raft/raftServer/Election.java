@@ -32,11 +32,9 @@ public class Election implements Runnable{
     @Override
     public void run() {
         if(node.getNodeConfig().isNewServer()){
-            node.addItself();
             return;
         }
         if(node.getNodeConfig().isShuttingDown()){
-            node.removeItself();
             return;
         }
         //use to interrupt task

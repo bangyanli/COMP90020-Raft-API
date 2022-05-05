@@ -3,7 +3,6 @@ package com.handshake.raft.controller;
 import com.handshake.raft.common.response.ResponseResult;
 import com.handshake.raft.raftServer.Node;
 import com.handshake.raft.raftServer.Status;
-import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import com.handshake.raft.raftServer.service.Impl.RaftConsensusServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +18,15 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/latency")
-public class LatencyController {
+@RequestMapping("/raftControl")
+public class RaftController {
 
     @Autowired
     Node node;
 
 
-    @PostMapping
-    public ResponseResult<Object> postBook(@RequestParam("ip") String ip,
+    @PostMapping("/latency")
+    public ResponseResult<Object> setLatency(@RequestParam("ip") String ip,
                                            @RequestParam("latency") int latency){
         RaftConsensusServiceImpl.latencyMap.put(ip,latency);
         return ResponseResult.suc("successfully set latency!");
@@ -44,6 +43,20 @@ public class LatencyController {
         } else {
             node.tryToShutDown();
             return ResponseResult.suc("Try to remove Node " + node.getNodeConfig().getSelf() + " from cluster!");
+        }
+    }
+
+    /**
+     * try to remove itself from cluster
+     * @return
+     */
+    @PostMapping("/election")
+    public ResponseResult<Object> election(){
+        if(node.getNodeStatus() == Status.LEADER){
+            return ResponseResult.fail("Node " + node.getNodeConfig().getSelf() + " is leader!");
+        } else {
+            node.setNodeStatus(Status.CANDIDATE);
+            return ResponseResult.suc("Node " + node.getNodeConfig().getSelf() + " start election!");
         }
     }
 

@@ -21,7 +21,7 @@ raft:
   electionTimeout: 15000
   heartBeatFrequent: 5000
   log: "logs/log3.json"
-  newServer: false
+  newServer: true
 
 library:
   address: "libraries/library3"

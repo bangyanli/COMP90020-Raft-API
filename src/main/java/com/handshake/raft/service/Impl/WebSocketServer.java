@@ -3,6 +3,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
@@ -26,6 +27,9 @@ public class WebSocketServer extends TextWebSocketHandler {
     private static ConcurrentHashMap<String,WebSocketSession> sessions = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
     private static Map<String, Integer> lengthMap = new ConcurrentHashMap<>();
+
+    @Value("${logging.file}")
+    private String logFilePath;
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message)

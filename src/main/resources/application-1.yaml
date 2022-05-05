@@ -12,12 +12,8 @@ logging:
 raft:
   servers:
     - "localhost:5001"
-    - "localhost:9001"
-    - "localhost:7001"
   serversSpringAddress:
     - "localhost:5000"
-    - "localhost:9000"
-    - "localhost:7000"
   self: "localhost:5001"
   electionTimeout: 7000
   heartBeatFrequent: 5000

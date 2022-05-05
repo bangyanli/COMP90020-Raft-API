@@ -78,7 +78,7 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 }
             }
 
-            logger.info("param {}", param.toString());
+            //logger.info("param {}", param.toString());
 
             //heartbeat
             if (param.getEntries() == null || param.getEntries().size() == 0) {

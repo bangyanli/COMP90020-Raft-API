@@ -57,6 +57,10 @@ public class Node implements LifeCycle{
         //get persistent state
         setCurrentTerm(log.getCurrentTerm());
         setVotedFor(log.getVotedFor());
+        //add itself to cluster
+        if(nodeConfig.isNewServer()){
+            SpringContextUtil.getBean(AddSelf.class).init();
+        }
     }
 
     @Override
@@ -190,7 +194,8 @@ public class Node implements LifeCycle{
         for (Map.Entry<Integer,Integer> entry: countMap.entrySet()){
             if(entry.getValue() >= majorityNumber){
                 if(entry.getKey() > log.getCommitIndex()){
-                    logger.info("New commit Index: {}", entry.getKey());
+                    //logger.info("log.getCommitIndex() {}", log.getCommitIndex());
+                    //logger.info("New commit Index: {}", entry.getKey());
                     log.setCommitIndex(entry.getKey());
                 }
                 //can have equal value e.g. one 28, one 29 , should choose 29
@@ -250,8 +255,9 @@ public class Node implements LifeCycle{
      * try to add itself to cluster
      */
     public void addItself(){
-        logger.info("Try to add itself {}", nodeConfig.getSelf());
         RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
+        NodeConfig nodeConfig = SpringContextUtil.getBean(NodeConfig.class);
+        logger.info("Try to add itself {}", nodeConfig.getSelf());
         //param
         AddPeerParam addPeerParam = AddPeerParam.builder()
                 .peerIp(nodeConfig.getSelf())
@@ -363,8 +369,9 @@ public class Node implements LifeCycle{
             logger.warn("Node {} is already trying to shut down!", nodeConfig.getSelf());
         }
         else {
-
             nodeConfig.setShuttingDown(true);
+            //stop itself
+            stop();
             //stop server
             SpringContextUtil.getBean(RpcServiceProvider.class).stop();
             //try to remove itself regularly

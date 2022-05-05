@@ -43,6 +43,7 @@ public class LogDatabaseImpl implements LogDatabase {
                     new TypeReference<LogInfo>() {
             });
         } catch (IOException e) {
+            //logger.warn(e.getMessage(),e);
             logger.warn("Cannot read log from file!");
         }
         finally {
