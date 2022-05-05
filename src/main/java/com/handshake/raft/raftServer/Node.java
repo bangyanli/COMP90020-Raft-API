@@ -1,11 +1,13 @@
 package com.handshake.raft.raftServer;
 
+import com.handshake.raft.common.response.ResponseResult;
 import com.handshake.raft.common.utils.SpringContextUtil;
 import com.handshake.raft.config.NodeConfig;
 import com.handshake.raft.raftServer.ThreadPool.RaftThreadPool;
 import com.handshake.raft.raftServer.log.LogSystem;
 import com.handshake.raft.raftServer.proto.*;
 import com.handshake.raft.raftServer.rpc.RpcClient;
+import com.handshake.raft.raftServer.rpc.RpcServiceProvider;
 import com.handshake.raft.raftServer.service.RaftConsensusService;
 import com.handshake.raft.service.Impl.WebSocketServer;
 import org.springframework.web.socket.WebSocketSession;
@@ -306,7 +308,7 @@ public class Node implements LifeCycle{
     /**
      * try to remove itself from cluster
      */
-    public void removeItself(){
+    public boolean removeItself(){
         logger.info("Try to remove itself {}", nodeConfig.getSelf());
         RpcClient rpcClient = SpringContextUtil.getBean(RpcClient.class);
         //param
@@ -321,13 +323,12 @@ public class Node implements LifeCycle{
             RaftConsensusService raftConsensusService = rpcClient.connectToService(server);
             if(raftConsensusService != null){
                 try {
-                    logger.info("removePeerParam {}", removePeerParam);
                     RemovePeerResult removePeerResult = raftConsensusService.removePeer(removePeerParam);
                     leaderId = removePeerResult.getLeaderId();
                     if(leaderId != null){
                         //already sent the request
                         if(leaderId.equals(server)){
-                            return;
+                            return removePeerResult.isSuccess();
                         }
                         //send the request to leader
                         else {
@@ -343,18 +344,49 @@ public class Node implements LifeCycle{
         }
         //send the request to leader
         if(leaderId == null){
-            return;
+            return false;
         }
         RaftConsensusService raftConsensusService = rpcClient.connectToService(leaderId);
         if(raftConsensusService != null){
             try {
                 RemovePeerResult removePeerResult = raftConsensusService.removePeer(removePeerParam);
+                return removePeerResult.isSuccess();
             }
             catch (Exception e) {
                 //logger.info(e.getMessage(),e);
                 logger.info("Fail to connect to {}", leaderId);
             }
         }
+        return false;
+    }
+
+    /**
+     * try to shut down itself
+     */
+    public void tryToShutDown(){
+        if(nodeStatus == Status.LEADER){
+            logger.warn("Node {} try to shutdown when it is leader!", nodeConfig.getSelf());
+        } else if(nodeConfig.isShuttingDown()) {
+            logger.warn("Node {} is already trying to shut down!", nodeConfig.getSelf());
+        }
+        else {
+
+            nodeConfig.setShuttingDown(true);
+            //stop server
+            SpringContextUtil.getBean(RpcServiceProvider.class).stop();
+            //try to remove itself regularly
+            RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
+            raftThreadPool.getScheduledExecutorService().scheduleAtFixedRate(()->{
+                        boolean isSuccess = removeItself();
+                        if(isSuccess){
+                            System.exit(0);
+                        }
+                    },
+                    0,
+                    3000,
+                    TimeUnit.MILLISECONDS);
+        }
+
     }
 
 

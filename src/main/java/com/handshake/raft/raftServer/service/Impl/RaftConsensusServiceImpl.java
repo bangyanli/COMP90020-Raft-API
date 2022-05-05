@@ -181,9 +181,9 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 return new AddPeerResult(false,null,node.getLeaderId());
             }
 
+            ServerInfo oldConfiguration = node.getNodeConfig().getOldConfiguration();
             //check whether peer is added before
             if(node.getNodeConfig().getServers().contains(addPeerParam.getPeerIp())){
-                ServerInfo oldConfiguration = node.getNodeConfig().getOldConfiguration();
                 //server already in cluster
                 if(oldConfiguration == null
                         || !oldConfiguration.getServers().contains(addPeerParam.getPeerIp())){
@@ -192,6 +192,11 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 else {
                     return new AddPeerResult(false,null,node.getLeaderId());
                 }
+            }
+
+            //still trying to process last change configuration process
+            if(oldConfiguration != null){
+                return new AddPeerResult(false,null,node.getLeaderId());
             }
 
             //new configuration
@@ -239,17 +244,22 @@ public class RaftConsensusServiceImpl implements RaftConsensusService {
                 return new RemovePeerResult(false,null,node.getLeaderId());
             }
 
+            ServerInfo oldConfiguration = node.getNodeConfig().getOldConfiguration();
             //check whether peer is removed before
             if(!node.getNodeConfig().getServers().contains(removePeerParam.getPeerIp())){
-                ServerInfo oldConfiguration = node.getNodeConfig().getOldConfiguration();
                 //server already removed
                 if(oldConfiguration == null
-                        || oldConfiguration.getServers().contains(removePeerParam.getPeerIp())){
+                        || !oldConfiguration.getServers().contains(removePeerParam.getPeerIp())){
                     return new RemovePeerResult(true,null,node.getLeaderId());
                 }
                 else {
                     return new RemovePeerResult(false,null,node.getLeaderId());
                 }
+            }
+
+            //still trying to process last change configuration process
+            if(oldConfiguration != null){
+                return new RemovePeerResult(false,null,node.getLeaderId());
             }
 
             //new configuration
