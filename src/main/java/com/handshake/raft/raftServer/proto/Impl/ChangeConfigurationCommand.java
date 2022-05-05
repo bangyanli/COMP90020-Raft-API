@@ -11,12 +11,16 @@ import com.handshake.raft.raftServer.proto.ServerInfo;
 import com.handshake.raft.raftServer.rpc.RpcClient;
 import lombok.Builder;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
 @Data
 @Builder
 public class ChangeConfigurationCommand implements Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(ChangeConfigurationCommand.class);
 
     private ArrayList<String> servers;
     private ArrayList<String> serversSpringAddress;
@@ -61,6 +65,11 @@ public class ChangeConfigurationCommand implements Command {
         else {
             nodeConfig.setOldConfiguration(null);
             nodeConfig.setNewServer(false);
+            //if the node itself not in the new configuration, shutdown
+            if(!nodeConfig.getServers().contains(nodeConfig.getSelf())){
+                logger.warn("Node {} not in cluster and will shutdown!", nodeConfig.getSelf());
+                System.exit(0);
+            }
         }
     }
 }

@@ -26,8 +26,8 @@ public class NodeConfig {
     private String log;
     //whether this server is added to cluster
     private boolean newServer;
-    //delete itself when stop
-    private boolean hasBeenNewServer;
+    //whether the server try to delete itself from cluster
+    private boolean shuttingDown = false;
 
     public ArrayList<String> getServers() {
         ReentrantReadWriteLock.ReadLock readLock = configurationLock.readLock();

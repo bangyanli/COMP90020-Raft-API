@@ -24,7 +24,7 @@ public class RaftThreadPool implements LifeCycle {
                 60,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>());
-        scheduledExecutorService = Executors.newScheduledThreadPool(3);
+        scheduledExecutorService = Executors.newScheduledThreadPool(4);
     }
 
 

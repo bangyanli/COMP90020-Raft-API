@@ -22,7 +22,6 @@ raft:
   heartBeatFrequent: 5000
   log: "logs/log3.json"
   newServer: false
-  hasBeenNewServer: false
 
 library:
   address: "libraries/library3"

@@ -35,6 +35,10 @@ public class Election implements Runnable{
             node.addItself();
             return;
         }
+        if(node.getNodeConfig().isShuttingDown()){
+            node.removeItself();
+            return;
+        }
         //use to interrupt task
         ConcurrentHashMap<String, Future<?>> RPCTaskMap = new ConcurrentHashMap<>();
         try {
