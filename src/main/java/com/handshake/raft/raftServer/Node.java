@@ -182,6 +182,11 @@ public class Node implements LifeCycle{
         //for 3 servers, 2 other servers, majorityNumber is 1
         //for 4 servers, 3 other servers, majorityNumber is 2
         int otherServerSize = nodeConfig.getOtherServers().size();
+        //if only one server in cluster, no need to check others
+        if(otherServerSize==0){
+            log.setCommitIndex(log.getLastIndex());
+            return;
+        }
         int majorityNumber = otherServerSize/2 + otherServerSize%2;
         HashMap<Integer,Integer> countMap = new HashMap<>();
         for(Integer matchLog : matchIndex.values()){
@@ -244,7 +249,6 @@ public class Node implements LifeCycle{
         }finally {
             heartbeat.init(nodeConfig.getHeartBeatFrequent());
         }
-        logger.info("log.getCommitIndex() == logEntry.getIndex() {}", log.getCommitIndex() == logEntry.getIndex());
         return log.getCommitIndex() == logEntry.getIndex();
     }
 
