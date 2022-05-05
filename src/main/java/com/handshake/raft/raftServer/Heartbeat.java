@@ -149,7 +149,7 @@ public class Heartbeat implements Runnable,LifeCycle{
                     RPCTaskMap.put(url,RPCTask);
                 }
             }
-            latch.await(3500, MILLISECONDS);
+            latch.await(node.getNodeConfig().getClientTimeout(), MILLISECONDS);
             //update N such that N > commitIndex
             node.setNForMatchIndex();
             //apply log

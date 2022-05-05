@@ -234,7 +234,7 @@ public class Node implements LifeCycle{
         RaftThreadPool raftThreadPool = SpringContextUtil.getBean(RaftThreadPool.class);
         Future<?> task = raftThreadPool.getExecutorService().submit(heartbeat);
         try {
-            task.get(10000, TimeUnit.MILLISECONDS);
+            task.get(nodeConfig.getClientTimeout(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             logger.warn("Replication in Interrupted when replicate {}", logEntry.toString());
             return false;

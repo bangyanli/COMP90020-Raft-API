@@ -23,6 +23,7 @@ public class NodeConfig {
     private String self;
     private volatile long electionTimeout;
     private long heartBeatFrequent;
+    private long clientTimeout;
     private String log;
     //whether this server is added to cluster
     private boolean newServer;
