@@ -47,9 +47,13 @@ please make sure you add java 15 and maven into your System Environment Variable
 └───raft
 ```
 It is a Springboot application with built-in raft server.
+
 Controller package handles the request from web.
+
 Service package handles the actions on database.
+
 All things about raft are included in raftServer package exclude the configuration.
+
 Configurations are in config package.
 
 ### raft 
@@ -108,9 +112,13 @@ raftServer
 ```
 #### Basic functions
 ThreadPool package provides manages the threads;
+
 service package provides the services for rpc server and clients.
+
 rpc package is used for rpc communication between nodes.
+
 proto package defines the variable transmitted between nodes,
+
 log package manages the log for raft.
 
 #### node
@@ -125,11 +133,14 @@ When node is started as new server, it will try to add itself to cluster using `
 
 
 ### Environment
+
 download [OpenJDK 15](https://jdk.java.net/archive/)
+
 download [Maven 3.8.5](https://maven.apache.org/download.cgi#downloading-apache-maven-3-8-5)
 
 ### Configuration
 if you want to set the configuration, create a file name ``` application-1.yml ```
+
 Then add```--spring.config.location=classpath:/application-1.yaml``` to ```Environment Variables```
 
 basic node ``` application-1.yml ```
@@ -175,7 +186,9 @@ spring:
 
 
 Other nodes' property file
+
 need to include at least one node in cluster
+
 Here we include "localhost:5001"
 
 new node``` application-2.yml ```
@@ -222,4 +235,5 @@ We already provided some pre-configured property file under ```src/main/resource
 
 ### Basic multi-server
 We also include a basic implementation for basic multi-servers which removed all functionality in raft.
+
 It is in ```bacis``` modules

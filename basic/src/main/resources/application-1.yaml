@@ -1,5 +1,5 @@
 server:
-  port: 5000
+  port: 9200
 
 # common log level
 logging:
@@ -11,14 +11,14 @@ logging:
 
 raft:
   servers:
-    - "localhost:5001"
-    - "localhost:9001"
-    - "localhost:7001"
+    - "localhost:9101"
+    - "localhost:9201"
+    - "localhost:9301"
   serversSpringAddress:
-    - "localhost:5000"
-    - "localhost:9000"
-    - "localhost:7000"
-  self: "localhost:5001"
+    - "localhost:9100"
+    - "localhost:9200"
+    - "localhost:9300"
+  self: "localhost:9101"
 
 library:
   address: "libraries/basicLibrary1"

@@ -206,6 +206,7 @@ public class Node implements LifeCycle{
                     //logger.info("log.getCommitIndex() {}", log.getCommitIndex());
                     //logger.info("New commit Index: {}", entry.getKey());
                     log.setCommitIndex(entry.getKey());
+                    heartbeat.run();
                 }
                 //can have equal value e.g. one 28, one 29 , should choose 29
             }
