@@ -1,0 +1,656 @@
+commit 0adfaa8d4396e8bb3f5bc60f198a86a57de45c4f
+Merge: c994217 4b81f46
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Sat May 7 20:40:30 2022 +1000
+
+    Merge branch 'main' of github.com:bangyanli/COMP90020-Raft-API into main
+
+commit c994217cea0fa3789981f3e3614be7078c0adacc
+Merge: 20fb271 6aad780
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Sat May 7 20:40:23 2022 +1000
+
+    add
+
+commit 4b81f469e928597e58e10d847c4d213230eb8d8f
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sat May 7 20:30:21 2022 +1000
+
+    Update README.md
+
+commit 55f26bd57d3d9edab9306be09b2b7357da547c3e
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sat May 7 20:04:05 2022 +1000
+
+    Update RaftController.java
+
+commit c846595eb0110b926f84fbe3605ebe594bc70143
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sat May 7 18:28:34 2022 +1000
+
+    Fix bug when set latency
+    
+    first, address are "localhost:5000"
+    the front end sends "http://localhost:5000"
+    Second, the time unit of timeout for RPC is millisecond instead of second.
+
+commit 032a422c6e1c1b79737fb339bb96eb062d6ae02d
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sat May 7 17:30:34 2022 +1000
+
+    Update commit efficiency
+
+commit 6aad78091dd65064532ea56cddbab2fbd45dd542
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sat May 7 15:52:16 2022 +1000
+
+    add start.cmd for quick start
+
+commit aa625a9bf9757eac67a666c4cb7bc4d836102d57
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sat May 7 12:32:59 2022 +1000
+
+    Add some comment
+
+commit 612b93e0ed7ac81740132daa4b7b55490feea110
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sat May 7 12:20:31 2022 +1000
+
+    Update README.md
+    
+    Update README.md
+
+commit 512dcd7f190d91c95aad5eb73c430ab1c767c681
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sat May 7 11:44:03 2022 +1000
+
+    Delete non-used function is Basic
+
+commit 80b3a9b21714629d916f2c1a11a22401fc6b67cd
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sat May 7 11:35:53 2022 +1000
+
+    Add basic multi-server implementation
+
+commit c063e8810af7a7a988bc249fe175990c2742e150
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 23:42:33 2022 +1000
+
+    Fix bug for NodeConfig
+
+commit b16c1d3a79345d3308a06e9eb01744cdd75d7388
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 22:44:55 2022 +1000
+
+    Fix bug when send message to web
+    
+    Update LogSystemImpl.java
+    
+    Update LogSystemImpl.java
+
+commit 20fb27133fa390473da81531ee328c13faf0191a
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 22:44:55 2022 +1000
+
+    Fix bug when send message to web
+    
+    Update LogSystemImpl.java
+
+commit f2eb1369a0b831783a148c6725d1b0d66dfe415d
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 22:32:05 2022 +1000
+
+    fix bug when only one server in cluster
+
+commit 701e304a1492ca8c0b0c7c8bd941a6bc61108ec9
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 22:15:31 2022 +1000
+
+    not send empty message
+
+commit 8c903639104609fc5e3018f5fd9318ba78b9d0d1
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 22:02:03 2022 +1000
+
+    Reduce system log for get request
+
+commit 610985798f6639bfe2834c96087e0ad8128aae1d
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 21:59:27 2022 +1000
+
+    fix sending system log to web
+
+commit 1beb812a7809a326534e1d54c6d621ada0269669
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 20:50:58 2022 +1000
+
+    Send only 10 log for first time
+
+commit 3a5f6c400612e45b90e757694da1dc38c597a644
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 20:48:11 2022 +1000
+
+    Optimise import
+
+commit 6bf6568b5bb6077ec7f18891df3b34872a2270cd
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 20:46:58 2022 +1000
+
+    fix log sender
+    
+    Update WebSocketServer.java
+
+commit 058dfb69031ddf33a8353cbb183336c8a4cc1989
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 19:47:32 2022 +1000
+
+    if  fail, come back to follower
+
+commit 4dd478ce4d74f0cc4a7eb8c4ae80898cad76a3ca
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 19:40:38 2022 +1000
+
+    Fix bug when autowire
+
+commit 819d4ff4a2500343de3da406d491c430c3aab4e4
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 19:17:20 2022 +1000
+
+    Fix nest dependency error when start
+
+commit 9519edb700328cddffd0a7ba59a89805988a09ad
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 19:12:00 2022 +1000
+
+    Update RaftController.java
+
+commit 8fd9a7e3874b073791a977bfb8e98dbd9d43a9cb
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 17:42:06 2022 +1000
+
+    Add ClientTimeout in NodeConfig
+
+commit 29fcc4ccc03ad8382f5a46e3e2b333c6a54cd820
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 17:35:18 2022 +1000
+
+    Update ElectionTimer.java
+
+commit a076356203ebc34fce5daff2d74e0ca212485f4d
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 17:25:35 2022 +1000
+
+    Fix bug when recover after crash
+    
+    When node recover after crash, it may still in cluster. Need to update its RPC client configuration
+
+commit ac8014028e6ab4ecda3e74894c911a9dc9c2a87c
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 17:07:26 2022 +1000
+
+    test add& remove peer, election control
+
+commit 8457507229adcbd056c519ba70c6a11066d68dd6
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 15:17:55 2022 +1000
+
+    fix reconnect after crash
+
+commit 2a8825c2b08a78820e822be2fac28c418b16cf20
+Merge: 62bd7e4 be41e86
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 14:37:35 2022 +1000
+
+    Merge branch 'main' of https://github.com/bangyanli/COMP90020-Raft-API
+
+commit 62bd7e4b5f73bca42f0e45479b1050bfefb53162
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 14:30:33 2022 +1000
+
+    soft shutdown
+    
+    Update Node.java
+
+commit be41e86e57c8ce8b63e18005bacdb6069037a395
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 14:30:33 2022 +1000
+
+    soft shutdown
+
+commit 53bb588f4e8f4ee9ae730807aba7fc21a21d12b1
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 13:06:18 2022 +1000
+
+    update property file
+
+commit 645a54f652fcb4daa5fc3d1a2b07cb0b07ef9f9a
+Merge: c9fca40 cb01ca9
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 13:05:05 2022 +1000
+
+    Merge branch 'main' of https://github.com/bangyanli/COMP90020-Raft-API
+
+commit c9fca402c3746e952bd0440f750441fb6090b74a
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Thu May 5 13:05:00 2022 +1000
+
+    implement add remove peer
+
+commit cb01ca990a917d0460f8be7a1b25adae6a8ca010
+Author: Yiyang-Huang <yiyahuang@student.unimelb.edu.au>
+Date:   Wed May 4 23:43:06 2022 +1000
+
+    change port 6000 because it is reserved
+
+commit 36a504f7d32e471bf24e490a8fad1389e43594e3
+Merge: 83a071b 1b17580
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Wed May 4 23:01:12 2022 +1000
+
+    Merge branch 'main' of github.com:bangyanli/COMP90020-Raft-API into main
+
+commit 83a071bfcd1689a2da902c2d0351e1e43d5464f2
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Wed May 4 23:00:59 2022 +1000
+
+    update 1100
+
+commit 1b1758001d547b3a212173cca52c7d4dfa163d96
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Wed May 4 22:39:41 2022 +1000
+
+    implement set latency
+
+commit db1141f6ab72a748a02594e739a75383ed6b06e6
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Wed May 4 22:20:01 2022 +1000
+
+    add files
+
+commit b37c363fe462d5658f8db978a08f5f6acf2c2b72
+Merge: 3337b06 a93593a
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Wed May 4 22:18:33 2022 +1000
+
+    Merge branch 'main' of github.com:bangyanli/COMP90020-Raft-API into main
+
+commit 3337b062e76cf4bafead87ab115f5bf4d8103c08
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Wed May 4 22:17:32 2022 +1000
+
+    update 1017
+
+commit a93593a87935cbb1dc0d89c176b65cfbd9d91b11
+Author: Yiyang-Huang <yiyahuang@student.unimelb.edu.au>
+Date:   Wed May 4 21:54:58 2022 +1000
+
+    Added CrossOrigin
+
+commit 8d4d1eeea9d10270fd2dec6cbdf644439275d06b
+Author: Yiyang-Huang <yiyahuang@student.unimelb.edu.au>
+Date:   Wed May 4 21:06:01 2022 +1000
+
+    set allow origin
+
+commit 5df62a3d1ebc8b8e756119faf4567bba330a7729
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Wed May 4 20:29:46 2022 +1000
+
+    Try set latency
+
+commit 83a59a865824f82e608a524114150df6d90ef4b8
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Wed May 4 18:42:45 2022 +1000
+
+    Update Heartbeat.java
+
+commit a26259cb6ca12fa9ebb815975e6dce31027c9687
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Wed May 4 18:37:55 2022 +1000
+
+    Basic raft implementation
+
+commit 4ebf146383d53714e5d996d3b554266cea252baf
+Merge: 8bb34db de2ee5f
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Tue May 3 23:30:05 2022 +1000
+
+    Merge branch 'main' of https://github.com/bangyanli/COMP90020-Raft-API
+
+commit 8bb34dbdf11dbabf0b36e19a179fae09c56ecf87
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Tue May 3 23:28:24 2022 +1000
+
+    Still bug when start
+
+commit de2ee5f0c0ce5b2fb2e6112adbd2061a1af99339
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Tue May 3 23:18:14 2022 +1000
+
+    websocket update 1118
+
+commit ce0597b1553ce72802119f94271879811a45093d
+Merge: 3baf018 92329ba
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Tue May 3 21:47:05 2022 +1000
+
+    Merge branch 'main' of github.com:bangyanli/COMP90020-Raft-API into main
+
+commit 3baf01877ed164a2b47bd413e56d0b3239bc8db9
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Tue May 3 21:46:00 2022 +1000
+
+    update 945
+
+commit 92329ba130de1293715bf07df81b0b26aab3afb3
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Tue May 3 21:45:23 2022 +1000
+
+    Middle implement heartbeat
+
+commit 658000fd1b4e3cda212a4b6137ac7becad364ed1
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Tue May 3 20:06:18 2022 +1000
+
+    Fix bug for scheduleWithFixedDelay
+
+commit c15a454e3b6b7558a6a5cc3a0a569fef164e52de
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Tue May 3 19:35:11 2022 +1000
+
+    Implement Election and ElectionTimer
+
+commit 76f9941e7cc418afe295b16ce58c67a2261e077e
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Tue May 3 18:39:02 2022 +1000
+
+    Implement RaftConsensusService
+
+commit 12ed131de424cf90fed8b9b32b465f325e28b588
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Tue May 3 16:12:44 2022 +1000
+
+    implement RPC
+    
+    Update init.java
+
+commit 981838f68758e2efe710c24bbedc804a7c59f578
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Tue May 3 14:16:05 2022 +1000
+
+    Rearrange the structure
+
+commit d081f16f44b1be810cc11ea6f484ea7992cda83b
+Merge: 28782d1 8cc3028
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon May 2 22:55:57 2022 +1000
+
+    Merge branch 'main' of github.com:bangyanli/COMP90020-Raft-API into main
+
+commit 28782d1a833d192da4b750d94836b02f4fe4fc69
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon May 2 22:55:42 2022 +1000
+
+    update 1055
+
+commit 8cc30289ccb5d2e038ea21476463c353295983f2
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon May 2 22:42:16 2022 +1000
+
+    Update Heartbeat
+
+commit 2aaba2696ae15c6047e479d39e2b6c04d466cf84
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon May 2 22:24:15 2022 +1000
+
+    update 1024
+
+commit e2704046f8e56f851f364c2cd5f4bf204cda3d73
+Merge: cb92353 52c1357
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon May 2 22:11:57 2022 +1000
+
+    Merge branch 'main' of github.com:bangyanli/COMP90020-Raft-API into main
+
+commit cb9235362763267184979213780beed7ac9493bf
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon May 2 22:11:48 2022 +1000
+
+    update
+
+commit 52c135770f28baf27107cb6cd847644c8061128d
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon May 2 22:04:52 2022 +1000
+
+    Update chapter
+
+commit 7ff167b6f6f4f905d354c9215ea74de4fd1c3876
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon May 2 21:42:23 2022 +1000
+
+    update 9:42
+
+commit 42b59c27467030697b61236221af2357b93acf28
+Merge: 2458c08 0cc8bed
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon May 2 20:49:45 2022 +1000
+
+    Merge remote-tracking branch 'origin/lingxiao1' into main
+
+commit 0cc8bed4416c26fda9a43e06d719e3513b0857eb
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon May 2 20:13:08 2022 +1000
+
+    Update postBook
+
+commit 82af109f8e994af8dafdcafbb4eec55613ed016d
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon May 2 19:53:25 2022 +1000
+
+    Add interface
+
+commit 2458c08a7a639e48fd3bb45bb953bf0ce152a241
+Merge: 492c1b6 525ace1
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon May 2 19:03:42 2022 +1000
+
+    Merge branch 'lingxiao1'
+
+commit 525ace1d582a48fe9d924f7b9179c8430530127b
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon May 2 19:03:27 2022 +1000
+
+    add Logdb
+
+commit 59a47b084137cf459cff9eb19b7b3e0b596101d2
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon May 2 17:52:00 2022 +1000
+
+    Add command class
+
+commit 492c1b67892711cfb121439e3a0f7bca868b8bea
+Merge: 7a0f73e b2897f0
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon May 2 17:18:59 2022 +1000
+
+    Merge branch 'lingxiao1'
+
+commit b2897f09b93598312787de7304f91fca7c24af4a
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon May 2 17:18:35 2022 +1000
+
+    Add ReentrantReadWriteLock
+
+commit 7a0f73e34850fabb0cf4926a7a068217d9791241
+Merge: edc8ab1 6caee34
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon May 2 14:15:44 2022 +1000
+
+    Merge branch 'main' of github.com:bangyanli/COMP90020-Raft-API into main
+
+commit edc8ab133b93449ddf65b941557b4484f6e3ee8c
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon May 2 14:15:38 2022 +1000
+
+    create csv writting method
+
+commit 9ea807b904e103722922d84b7a6a5c6a98d5f1cf
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sun May 1 21:55:58 2022 +1000
+
+    web socket implementation
+
+commit e6a858ddaadcbeca7300141e71a5808ba04ae87b
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sun May 1 21:24:44 2022 +1000
+
+    read config proerty
+
+commit 6caee34188e284410c79109516007afe43ede74a
+Merge: 4f44292 59c0b76
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sun May 1 21:07:06 2022 +1000
+
+    Merge branch 'main' of https://github.com/bangyanli/COMP90020-Raft-API
+
+commit 59c0b76fe051e355209ee6630e2ad3c0dad97463
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Sun May 1 20:31:31 2022 +1000
+
+    add alipay rpc module
+
+commit 4f44292b78faa4e66f3a91692ca07caf58437ea8
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Sun May 1 20:23:13 2022 +1000
+
+    add raft server property
+
+commit 818fcb018bf89c2487be02bd12e0fcef8f0d1472
+Merge: 8ecde9c 52538dd
+Author: bangyanli <bangyan2015@gmail.com>
+Date:   Sun May 1 19:28:37 2022 +1000
+
+    Merge pull request #2 from bangyanli/revert-1-bangyan
+    
+    Revert "add required raft classes"
+
+commit 52538dda081d52d8b07ef487e1373edd43ebebe1
+Author: bangyanli <bangyan2015@gmail.com>
+Date:   Sun May 1 19:28:21 2022 +1000
+
+    Revert "add required raft classes"
+
+commit 8ecde9c277f4b735c8232d124b2ab07375ed21be
+Merge: 4cc7982 eb8ad5f
+Author: bangyanli <bangyan2015@gmail.com>
+Date:   Sun May 1 16:03:43 2022 +1000
+
+    Merge pull request #1 from bangyanli/bangyan
+    
+    add required raft classes
+
+commit eb8ad5f0831cf25dd2f80532dcb5ba2565ceebef
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Sun May 1 16:02:35 2022 +1000
+
+    add required raft classes
+
+commit 1d0a4a5787669deac76405043dfdb494e9d9c90b
+Merge: cb20723 4cc7982
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Wed Apr 27 21:58:26 2022 +1000
+
+    Merge branch 'main' of github.com:bangyanli/COMP90020-Raft-API into bangyan
+
+commit cb20723eee432ca3946f1e04670fb2883ad25f1c
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Wed Apr 27 21:53:49 2022 +1000
+
+    add node interface and its related classes
+
+commit 4cc798209e0100b24a31c1f59152fd2d8d671856
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Tue Apr 26 10:42:45 2022 +1000
+
+    Add logger
+
+commit f25b80fd9cc8c9bd55eef90dee863e7d95bbd86a
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon Apr 25 22:26:01 2022 +1000
+
+    rpc module implementation
+
+commit e169d3dbcd057ab84dfe16c195870064b1baed63
+Author: bangyan li <bangyan2015@gmail.com>
+Date:   Mon Apr 25 21:38:08 2022 +1000
+
+    create raft node
+
+commit d65c6a535aeab885b369e52a70667544b034ca12
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon Apr 25 16:42:30 2022 +1000
+
+    Optimise import
+
+commit 8a1d73d77a23d4dd913ac109d0c06745ab651395
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon Apr 25 16:04:06 2022 +1000
+
+    Fix: upload book chapter with Swagger
+    
+    Fix: upload book chapter with Swagger
+
+commit 7c3698f5eeb6a13eaf82173704a35cccc5655b54
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon Apr 25 16:04:06 2022 +1000
+
+    Fix: upload book chapter with Swagger
+
+commit 488cb588c7942c67addb0954cbb1106fd0340649
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon Apr 25 15:44:15 2022 +1000
+
+    Swagger document
+
+commit 24df5b3037f46dba9e5eaee991ea410653caacb8
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon Apr 25 15:27:15 2022 +1000
+
+    Fix: throw proper exception
+
+commit 68f686455b83770584f36cecb158361d414401c5
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Mon Apr 25 14:36:33 2022 +1000
+
+    Basic API implementation
+    
+    getLibraryCatalog
+    getBookInfo
+    postBook
+    getBookIndex
+    getBookChapter
+    uploadBookChapter
+
+commit 891fc6a7592cbf8884d8e29c00a29c38d036bee2
+Author: Lingxiao108105 <71265122+Lingxiao108105@users.noreply.github.com>
+Date:   Fri Apr 22 22:25:44 2022 +1000
+
+    Springboot init
+
+commit 3946cba40558a82f77233fd4d45d8a296236adad
+Author: bangyanli <bangyan2015@gmail.com>
+Date:   Fri Apr 22 22:07:42 2022 +1000
+
+    Rename .ignore to .gitignore
+
+commit 2a83772c6bf9cf5346d78cfa722f47e6e5638466
+Author: bangyanli <bangyan2015@gmail.com>
+Date:   Fri Apr 22 22:06:49 2022 +1000
+
+    Create .ignore
+
+commit a216ae592ede4bb40fac0628259e123e7ad05309
+Author: bangyanli <bangyan2015@gmail.com>
+Date:   Fri Apr 22 21:42:37 2022 +1000
+
+    Create README.md
