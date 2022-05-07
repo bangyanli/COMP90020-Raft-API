@@ -1,5 +1,10 @@
 # COMP90020-Raft-API
 
+
+### Team
+
+Written by team Handshake
+
 ### Project Description
 This is the backend for team Handshake of comp90020 Distributed Algorithm, implementing raft algorithm
 
