@@ -54,23 +54,6 @@ public class RpcClient implements LifeCycle {
         }
     }
 
-    public void addServerConfig(String address) {
-        if(serverHashMap.get(address)!=null){
-            return;
-        }
-        ConsumerConfig<RaftConsensusService> consumerConfig = new ConsumerConfig<RaftConsensusService>()
-                .setInterfaceId(RaftConsensusService.class.getName())
-                .setProtocol("bolt")
-                .setDirectUrl("bolt://" + address)
-                .setTimeout(60)
-                .setConnectTimeout(30);
-        serverHashMap.put(address,consumerConfig);
-    }
-
-    public void remove(String address) {
-        serverHashMap.remove(address);
-    }
-
     @Override
     public void stop() {
         logger.debug("Stopping {}", RpcClient.class);
