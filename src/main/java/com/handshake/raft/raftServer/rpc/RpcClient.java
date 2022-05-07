@@ -24,8 +24,11 @@ public class RpcClient implements LifeCycle {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcClient.class);
 
+    private static final int TIME_OUT = 30000;
+
     @Autowired
     private NodeConfig nodeConfig;
+
 
     private final ConcurrentHashMap<String,ConsumerConfig<RaftConsensusService>> serverHashMap = new ConcurrentHashMap<>();
 
@@ -55,8 +58,8 @@ public class RpcClient implements LifeCycle {
                     .setInterfaceId(RaftConsensusService.class.getName())
                     .setProtocol("bolt")
                     .setDirectUrl("bolt://" + address)
-                    .setTimeout(60*1000)
-                    .setConnectTimeout(30*1000);
+                    .setTimeout(TIME_OUT)
+                    .setConnectTimeout(TIME_OUT);
             serverHashMap.put(address,consumerConfig);
         }
     }
@@ -69,8 +72,8 @@ public class RpcClient implements LifeCycle {
                 .setInterfaceId(RaftConsensusService.class.getName())
                 .setProtocol("bolt")
                 .setDirectUrl("bolt://" + address)
-                .setTimeout(60)
-                .setConnectTimeout(30);
+                .setTimeout(TIME_OUT)
+                .setConnectTimeout(TIME_OUT);
         serverHashMap.put(address,consumerConfig);
     }
 
