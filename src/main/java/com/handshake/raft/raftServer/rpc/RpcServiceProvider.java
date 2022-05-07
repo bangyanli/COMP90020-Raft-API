@@ -12,6 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * <p>
+ *  RpcServiceProvider to provide Rpc servers
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Service
 public class RpcServiceProvider implements LifeCycle {
 

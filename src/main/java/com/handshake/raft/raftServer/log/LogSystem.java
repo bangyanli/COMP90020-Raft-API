@@ -5,6 +5,13 @@ import com.handshake.raft.raftServer.proto.LogEntry;
 
 import java.util.ArrayList;
 
+/**
+ * <p>
+ *  LogSystem
+ * </p>
+ *
+ * @author Lingxiao
+ */
 public interface LogSystem extends LifeCycle {
 
     public int getCommitIndex();

@@ -8,6 +8,10 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ *
+ * @author Lingxiao
+ */
 @Data
 @Builder
 public class LogEntry implements Serializable{

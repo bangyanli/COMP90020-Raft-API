@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 /**
  * use to add peer and remove peer
+ * @author lingxiao
  */
 @Data
 @AllArgsConstructor

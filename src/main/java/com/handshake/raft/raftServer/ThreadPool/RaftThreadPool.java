@@ -6,6 +6,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.*;
 
+/**
+ * <p>
+ *  RaftThreadPool
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Component
 @Data
 public class RaftThreadPool implements LifeCycle {

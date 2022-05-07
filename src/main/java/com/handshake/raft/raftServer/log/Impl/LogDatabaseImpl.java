@@ -14,6 +14,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * <p>
+ *  LogDatabaseImpl
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Repository
 public class LogDatabaseImpl implements LogDatabase {
 

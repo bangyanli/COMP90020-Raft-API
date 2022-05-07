@@ -18,6 +18,13 @@ import java.util.ArrayList;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * <p>
+ *  AddSelf
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Component
 public class AddSelf implements LifeCycle{
 

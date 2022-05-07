@@ -16,6 +16,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * <p>
+ *  LogSystemImpl
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Service
 public class LogSystemImpl implements LogSystem {
 

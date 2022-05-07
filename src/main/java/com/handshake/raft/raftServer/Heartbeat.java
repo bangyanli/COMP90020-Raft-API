@@ -17,6 +17,13 @@ import java.util.concurrent.*;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+/**
+ * <p>
+ *  Heartbeat
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Component
 public class Heartbeat implements Runnable,LifeCycle{
 

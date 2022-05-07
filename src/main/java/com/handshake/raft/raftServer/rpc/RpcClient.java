@@ -12,6 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * <p>
+ *  RpcClient to access Rpc server
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Service
 public class RpcClient implements LifeCycle {
 

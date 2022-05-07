@@ -8,6 +8,13 @@ import com.handshake.raft.raftServer.proto.Impl.UploadChapterCommand;
 
 import java.io.Serializable;
 
+/**
+ * <p>
+ *  Command interface that each command can be executed
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,

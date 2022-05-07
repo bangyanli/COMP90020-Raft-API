@@ -19,7 +19,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
+ * <p>
+ *  Election
+ * </p>
  *
+ * @author Lingxiao
  */
 public class Election implements Runnable{
 

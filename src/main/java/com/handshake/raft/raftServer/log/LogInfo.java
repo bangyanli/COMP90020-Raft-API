@@ -7,6 +7,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 
+/**
+ * <p>
+ *  LogInfo
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

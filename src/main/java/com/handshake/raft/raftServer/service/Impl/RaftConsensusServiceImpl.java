@@ -16,6 +16,13 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * <p>
+ *  RaftConsensusServiceImpl
+ * </p>
+ *
+ * @author Lingxiao
+ */
 public class RaftConsensusServiceImpl implements RaftConsensusService {
 
     private static final Logger logger = LoggerFactory.getLogger(RaftConsensusServiceImpl.class);

@@ -6,6 +6,10 @@ import lombok.ToString;
 
 import java.io.Serializable;
 
+/**
+ *
+ * @author Lingxiao
+ */
 @Data
 @ToString
 @AllArgsConstructor

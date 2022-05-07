@@ -11,6 +11,13 @@ import org.springframework.context.annotation.Configuration;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * <p>
+ *  NodeConfig: configuration of the node
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Data
 @ToString
 @Configuration
@@ -21,13 +28,16 @@ public class NodeConfig {
 
     private static final ReentrantReadWriteLock configurationLock = new ReentrantReadWriteLock();
 
+    //raft servers
     private ArrayList<String> servers;
+    //spring address fro raft servers
     private ArrayList<String> serversSpringAddress;
     private ServerInfo oldConfiguration;
     private String self;
     private volatile long electionTimeout;
     private long heartBeatFrequent;
     private long clientTimeout;
+    //where to save raft log
     private String log;
     //whether this server is added to cluster
     private boolean newServer;
@@ -74,6 +84,9 @@ public class NodeConfig {
         }
     }
 
+    /**
+     * get both servers and ServersSpringAddress
+     */
     public ServerInfo getServerInfo(){
         ReentrantReadWriteLock.ReadLock readLock = configurationLock.readLock();
         try {
@@ -84,6 +97,9 @@ public class NodeConfig {
         }
     }
 
+    /**
+     * set both servers and ServersSpringAddress
+     */
     public void setServerInfo(ServerInfo serverInfo){
         ReentrantReadWriteLock.WriteLock writeLock = configurationLock.writeLock();
         try {
@@ -95,12 +111,21 @@ public class NodeConfig {
         }
     }
 
+    /**
+     * get the servers other than itself
+     * @return the servers other than itself
+     */
     public ArrayList<String> getOtherServers(){
         ArrayList<String> otherServers = new ArrayList<>(servers);
         otherServers.remove(self);
         return otherServers;
     }
 
+    /**
+     * get SpringAddress by raft address
+     * @param peer raft address
+     * @return SpringAddress of peer
+     */
     public String getSpringAddress(String peer){
         int index = servers.indexOf(peer);
         //if not exist, return the first

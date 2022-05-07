@@ -10,6 +10,13 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * <p>
+ *  ElectionTimer
+ * </p>
+ *
+ * @author Lingxiao
+ */
 @Component
 public class ElectionTimer implements Runnable,LifeCycle{
 
