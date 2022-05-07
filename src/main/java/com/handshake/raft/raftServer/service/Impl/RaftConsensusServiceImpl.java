@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class RaftConsensusServiceImpl implements RaftConsensusService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LogSystemImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(RaftConsensusServiceImpl.class);
     public static final ReentrantLock voteLock = new ReentrantLock();
     public static final ReentrantLock appendLock = new ReentrantLock();
     public static final ReentrantLock addPeerLock = new ReentrantLock();

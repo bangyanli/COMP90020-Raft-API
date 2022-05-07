@@ -1,0 +1,28 @@
+server:
+  port: 9000
+
+# common log level
+logging:
+  level:
+    root: INFO
+  file:
+    name: "log2.log"
+
+raft:
+  servers:
+    - "localhost:5001"
+    - "localhost:9001"
+    - "localhost:7001"
+  serversSpringAddress:
+    - "localhost:5000"
+    - "localhost:9000"
+    - "localhost:7000"
+  self: "localhost:9001"
+
+library:
+  address: "libraries/basicLibrary2"
+
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
