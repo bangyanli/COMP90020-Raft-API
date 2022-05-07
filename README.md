@@ -3,6 +3,12 @@
 ### Project Description
 This is the backend for team Handshake of comp90020 Distributed Algorithm, implementing raft algorithm
 
+
+### QUICK START FOR WINDOWS
+run ```start.cmd``` 
+
+please make sure you add java 15 and maven into your System Environment Variables
+
 ### Raft Structure
 
 ```
@@ -120,6 +126,7 @@ When node is started as new server, it will try to add itself to cluster using `
 
 ### Environment
 download [OpenJDK 15](https://jdk.java.net/archive/)
+download [Maven 3.8.5](https://maven.apache.org/download.cgi#downloading-apache-maven-3-8-5)
 
 ### Configuration
 if you want to set the configuration, create a file name ``` application-1.yml ```
