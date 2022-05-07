@@ -45,6 +45,7 @@ public class RaftController {
         }
         //logger.info("Add latency {} when response to {}", latency,ip);
         RaftConsensusServiceImpl.latencyMap.put(addressBySpringAddress,latency);
+        logger.info("Latency for connect to Node {} is set to {}", ip,latency);
         return ResponseResult.suc("successfully set latency!");
     }
 
