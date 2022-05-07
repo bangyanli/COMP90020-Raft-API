@@ -1,9 +1,12 @@
 package com.handshake.raft.controller;
 
+import com.handshake.raft.RaftApplication;
 import com.handshake.raft.common.response.ResponseResult;
 import com.handshake.raft.raftServer.Node;
 import com.handshake.raft.raftServer.Status;
 import com.handshake.raft.raftServer.service.Impl.RaftConsensusServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/raftControl")
 public class RaftController {
 
+    private static final Logger logger = LoggerFactory.getLogger(RaftController.class);
+
     @Autowired
     Node node;
 
@@ -28,7 +33,18 @@ public class RaftController {
     @PostMapping("/latency")
     public ResponseResult<Object> setLatency(@RequestParam("ip") String ip,
                                            @RequestParam("latency") int latency){
-        RaftConsensusServiceImpl.latencyMap.put(ip,latency);
+        if(ip.contains("http://")){
+            ip = ip.split("http://")[1];
+        }
+        if(ip.contains("https://")){
+            ip = ip.split("https://")[1];
+        }
+        String addressBySpringAddress = node.getNodeConfig().getAddressBySpringAddress(ip);
+        if(addressBySpringAddress == null){
+            return ResponseResult.fail("Retry later!");
+        }
+        //logger.info("Add latency {} when response to {}", latency,ip);
+        RaftConsensusServiceImpl.latencyMap.put(addressBySpringAddress,latency);
         return ResponseResult.suc("successfully set latency!");
     }
 

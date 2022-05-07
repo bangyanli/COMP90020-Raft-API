@@ -55,8 +55,8 @@ public class RpcClient implements LifeCycle {
                     .setInterfaceId(RaftConsensusService.class.getName())
                     .setProtocol("bolt")
                     .setDirectUrl("bolt://" + address)
-                    .setTimeout(60)
-                    .setConnectTimeout(30);
+                    .setTimeout(60*1000)
+                    .setConnectTimeout(30*1000);
             serverHashMap.put(address,consumerConfig);
         }
     }

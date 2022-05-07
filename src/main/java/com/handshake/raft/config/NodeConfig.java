@@ -136,4 +136,19 @@ public class NodeConfig {
         return serversSpringAddress.get(index);
     }
 
+    /**
+     * get raft address by SpringAddress
+     * @param springAddress springAddress
+     * @return address of springAddress
+     */
+    public String getAddressBySpringAddress(String springAddress){
+        int index = serversSpringAddress.indexOf(springAddress);
+        //if not exist, return null
+        if(index == -1){
+            logger.warn("getSpringAddress address {} not exist!",springAddress);
+            return null;
+        }
+        return servers.get(index);
+    }
+
 }
