@@ -257,7 +257,7 @@ public class Node implements LifeCycle{
         }finally {
             heartbeat.init(nodeConfig.getHeartBeatFrequent());
         }
-        return log.getCommitIndex() == logEntry.getIndex();
+        return log.getCommitIndex() >= logEntry.getIndex();
     }
 
     /**
