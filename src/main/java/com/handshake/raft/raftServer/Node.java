@@ -255,7 +255,9 @@ public class Node implements LifeCycle{
             logger.warn("Replication timeout when replicate {}", logEntry.toString());
             return false;
         }finally {
-            heartbeat.init(nodeConfig.getHeartBeatFrequent());
+            if(nodeStatus == Status.LEADER){
+                heartbeat.init(nodeConfig.getHeartBeatFrequent());
+            }
         }
         return log.getCommitIndex() >= logEntry.getIndex();
     }
