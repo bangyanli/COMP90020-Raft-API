@@ -80,6 +80,7 @@ public class Heartbeat implements Runnable,LifeCycle{
                 logger.warn("Node {}  start heartbeat when status: {}",
                         node.getNodeConfig().getSelf(),
                         node.getNodeStatus());
+                node.getHeartbeat().stop();
                 return;
             }
             logger.info("Node {} start heartbeat", node.getNodeConfig().getSelf());
