@@ -101,7 +101,7 @@ public class Election implements Runnable{
             }
 
             //wait for response
-            latch.await(3500, MILLISECONDS);
+            latch.await(node.getNodeConfig().getElectionTimeout(), MILLISECONDS);
 
             //get more than half vote
             if (voteGet.get() > (config.getServers().size()/2)) {
