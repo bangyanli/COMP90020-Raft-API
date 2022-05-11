@@ -44,7 +44,7 @@ public class RpcClient implements LifeCycle {
             raftConsensusService = consumerConfig.refer();
         }
         catch (Exception e){
-            logger.info(e.getMessage(),e);
+            //logger.info(e.getMessage(),e);
             logger.info("Fail to connect to " + ip);
         }
         return raftConsensusService;
