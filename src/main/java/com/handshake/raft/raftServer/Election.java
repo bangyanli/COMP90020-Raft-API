@@ -69,7 +69,7 @@ public class Election implements Runnable{
                     .build();
             ArrayList<String> peers = config.getOtherServers();
             //use to wait result
-            CountDownLatch latch = new CountDownLatch(peers.size());
+            CountDownLatch latch = new CountDownLatch(config.getServers().size()/2);
             for (String peer : peers) {
                 RaftConsensusService service = rpcClient.connectToService(peer);
                 if (service != null) {
@@ -101,7 +101,7 @@ public class Election implements Runnable{
             }
 
             //wait for response
-            latch.await(node.getNodeConfig().getElectionTimeout(), MILLISECONDS);
+            latch.await();
 
             //get more than half vote
             if (voteGet.get() > (config.getServers().size()/2)) {
@@ -118,6 +118,7 @@ public class Election implements Runnable{
             }
         }catch (InterruptedException e){
             logger.debug("Election is Interrupted!");
+        }finally {
             for(Future<?> RPCTask: RPCTaskMap.values()){
                 RPCTask.cancel(true);
             }
