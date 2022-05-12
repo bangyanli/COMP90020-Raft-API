@@ -6,7 +6,7 @@ logging:
   level:
     root: INFO
   file:
-    name: "log2.log"
+    name: "log2basic.log"
 
 raft:
   servers:
