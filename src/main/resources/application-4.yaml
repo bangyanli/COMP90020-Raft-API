@@ -21,7 +21,7 @@ raft:
     - "localhost:10000"
   self: "localhost:10001"
   electionTimeout: 15000
-  heartBeatFrequent: 5000
+  heartBeatFrequent: 10000
   clientTimeout: 10000
   log: "logs/log4.json"
   newServer: true
