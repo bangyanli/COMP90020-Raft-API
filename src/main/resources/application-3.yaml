@@ -18,7 +18,7 @@ raft:
     - "localhost:9000"
     - "localhost:7000"
   self: "localhost:7001"
-  electionTimeout: 15000
+  electionTimeout: 30000
   heartBeatFrequent: 10000
   clientTimeout: 10000
   log: "logs/log3.json"

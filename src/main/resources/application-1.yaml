@@ -15,7 +15,7 @@ raft:
   serversSpringAddress:
     - "localhost:5000"
   self: "localhost:5001"
-  electionTimeout: 15000
+  electionTimeout: 30000
   heartBeatFrequent: 10000
   clientTimeout: 10000
   log: "logs/log1.json"
